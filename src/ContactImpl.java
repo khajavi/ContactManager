@@ -5,14 +5,16 @@ public class ContactImpl implements Contact {
 	private String Name;
 	private String Notes;
 	
-	public ContactImpl(int ID, String Name, String Notes){
-		this.ID = ID;
+	public ContactImpl(String Name, String Notes){
+		ContactManagerImpl.IDnumbers++;
+		ID = ContactManagerImpl.IDnumbers;
 		this.Name = Name;
 		this.Notes = Notes;
 	}
 	
-	public ContactImpl(int ID, String Name){
-		this.ID = ID;
+	public ContactImpl(String Name){
+		ContactManagerImpl.IDnumbers++;
+		ID = ContactManagerImpl.IDnumbers;
 		this.Name = Name;
 		this.Notes = "";
 	}
