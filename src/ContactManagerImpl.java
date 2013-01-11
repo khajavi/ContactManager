@@ -8,5 +8,7 @@ public class ContactManagerImpl implements ContactManager {
 		private Set<Contact> Contacts;
 		private List<Meeting> FutureMeetings;
 		private List<Meeting> PastMeetings;
-		private Calendar Date; 
+		private Calendar Date;
+		
+		
 }
