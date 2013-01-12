@@ -18,7 +18,7 @@ public interface ContactManager {
 	 * 			or if contact is unknown/non-existent 
 	 *
 	 */
-	int addFutureMeeting(Set <Contact> contacts, Calendar date);
+	int addFutureMeeting(Set<Contact> contacts, Calendar date);
 	
 	/**
 	 * Returns PAST meeting with Requested ID or null if there was none
