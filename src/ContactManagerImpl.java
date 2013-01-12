@@ -1,7 +1,8 @@
 import java.util.Calendar;
 import java.util.*;
-import java.util.Set;
 import java.lang.Exception;
+
+//Add a field meetings?
 
 public class ContactManagerImpl implements ContactManager {
 
@@ -54,13 +55,32 @@ public class ContactManagerImpl implements ContactManager {
 		 */
 		public FutureMeeting getFutureMeeting(int id){
 			for (int i = 0; i < PastMeetings.size(); i++){
-				if(PastMeeting.get(i).getID() == id){
+				if(PastMeetings.get(i).getID() == id){
 					throw new IllegalArgumentException("This meeting has already taken place");
 				}
 			}
 			for (int i = 0; i < FutureMeetings.size(); i++){
 				if(FutureMeetings.get(i).getID() == id){
 					return FutureMeetings.get(i);
+				}
+			}
+			return null;
+		}
+		
+		
+		/**
+		 * Checks FutureMeetings and PastMeetings for the meeting with the ID and then upcasts
+		 * it to MeetingImpl
+		 */
+		public Meeting getMeeting(int id){
+			for(int i = 0; i < FutureMeetings.size(); i++){
+				if(FutureMeetings.get(i).getID() == id){
+					return (Meeting)FutureMeetings.get(i);
+				}	
+			}
+			for(int i = 0; i < PastMeetings.size(); i++){
+				if(PastMeetings.get(i).getID() == id){
+					return (Meeting)PastMeetings.get(i);
 				}
 			}
 			return null;

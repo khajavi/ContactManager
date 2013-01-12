@@ -7,19 +7,23 @@ public class PastMeetingImpl implements PastMeeting {
 	private Calendar Date;
 	private Set<Contact> Attendees;
 	private String Notes;
-	/**
-	 * do I want a constructor like this? How will the system turn future meetings into past meetings
-	 * 
-	 * @param Date
-	 * @param Attendees
+
 	 
 	public PastMeetingImpl(Calendar Date, Set<Contact> Attendees){
 		ContactManagerImpl.IDnumbers++;
 		ID = ContactManagerImpl.IDnumbers;
 		this.Date = Date;
 		this.Attendees = Attendees;
+		this.Notes = "";
 	}
-	**/
+	
+	public PastMeetingImpl(Calendar Date, Set<Contact> Attendees, String Notes){
+		ContactManagerImpl.IDnumbers++;
+		ID = ContactManagerImpl.IDnumbers;
+		this.Date = Date;
+		this.Attendees = Attendees;
+		this.Notes = Notes;
+	}
 	
 	public int getID() {
 		return ID;
