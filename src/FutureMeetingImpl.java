@@ -18,7 +18,6 @@ public class FutureMeetingImpl implements FutureMeeting {
 		return ID;
 	}
 
-
 	public Calendar getDate() {
 		return Date;
 	}

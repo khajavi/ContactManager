@@ -1,6 +1,6 @@
-import java.util.Calendar;
 import java.util.*;
 import java.lang.Exception;
+import java.lang.reflect.Array;
 
 //Add a field meetings?
 
@@ -127,6 +127,22 @@ public class ContactManagerImpl implements ContactManager {
 		/**
 		 * This method sorts the list of meetings being held with the contact by calling the 
 		 * quickSort method. A lack of duplicates is ensured by using a set prior to sorting
-		 * the list
+		 * the list.
 		 */
+		
+		public List<Meeting> getFutureMeetingList(Contact contact){
+			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
+			for(int i = 0; i < FutureMeetings.size(); i++){
+				if(FutureMeetings.get(i).getContacts().contains(contact)){
+					meetings.add(FutureMeetings.get(i));
+				}
+			}
+			List<Meeting> result = new ArrayList<Meeting>();
+			meetings.addAll(result); 
+			for(int i = 0; i < result.size(); i++){
+				result.get(i); 
+			}
+			quickSort(result);
+			return result;
+		}
 }
