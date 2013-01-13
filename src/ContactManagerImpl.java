@@ -131,6 +131,9 @@ public class ContactManagerImpl implements ContactManager {
 		 */
 		
 		public List<Meeting> getFutureMeetingList(Contact contact){
+			if(!Contacts.contains(contact)){
+				throw new IllegalArgumentException("That contact does not exist");
+			}
 			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
 			for(int i = 0; i < FutureMeetings.size(); i++){
 				if(FutureMeetings.get(i).getContacts().contains(contact)){
@@ -139,9 +142,22 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			List<Meeting> result = new ArrayList<Meeting>();
 			meetings.addAll(result); 
-			for(int i = 0; i < result.size(); i++){
-				result.get(i); 
+			quickSort(result);
+			return result;
+		}
+		
+		public List<Meeting> getFutureMeetingList(Calendar date){
+			if(date.before(Date)){
+				throw new IllegalArgumentException("That's in the past");
 			}
+			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
+			for(int i = 0; i < FutureMeetings.size(); i++){
+				if(FutureMeetings.get(i).getDate().compareTo(date) == 0){
+					meetings.add(FutureMeetings.get(i));
+				}
+			}
+			List<Meeting> result = new ArrayList<Meeting>();
+			meetings.addAll(result);
 			quickSort(result);
 			return result;
 		}
