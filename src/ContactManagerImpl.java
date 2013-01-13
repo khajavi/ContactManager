@@ -85,4 +85,48 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			return null;
 		}
+		
+		/**
+		 * Sorts a list of meetings chronologically 
+		 * 
+		 * @param List<Meeting> a list of Meetings
+		 * @return List<Meeting> returns a sorted list of Meetings 
+		 */
+		
+		public List<Meeting> quickSort(List<Meeting> list){
+			if(list.size() == 1){
+				return list;
+			}
+			else{
+				List<Meeting> before = new ArrayList<Meeting>();
+				List<Meeting> after = new ArrayList<Meeting>();
+				Meeting pivot = list.get(0);
+				for(int i = 1; i < list.size(); i++){
+					if(list.get(i).getDate().before(pivot.getDate())){
+						before.add(list.get(i));
+					}
+					else{
+						after.add(list.get(i));
+					}
+				}
+				if(before.size() > 1){
+					quickSort(before);
+				}
+				if(after.size() > 1){
+					quickSort(after);
+				}
+				List<Meeting> result = before;
+				result.add(pivot);
+				for(int i = 0; i < after.size(); i++){
+					result.add(after.get(i));
+				}
+				return result;
+			}
+		}
+		
+		/**
+		 * This method sorts the list of meetings being held with the contact by calling the 
+		 * quickSort method. A lack of duplicates is ensured by using a set prior to sorting
+		 * the list
+		 */
 }
