@@ -3,13 +3,14 @@ import java.lang.Exception;
 import java.lang.reflect.Array;
 
 //Add a field meetings?
+//need to change everything from meeting, etc to meetingImpl
 
 public class ContactManagerImpl implements ContactManager {
 
 		public static int IDnumbers;
-		private Set<Contact> Contacts;
-		private ArrayList<FutureMeeting> FutureMeetings;
-		private ArrayList<PastMeeting> PastMeetings;
+		private LinkedHashSet<Contact> Contacts;
+		private ArrayList<FutureMeetingImpl> FutureMeetings;
+		private ArrayList<PastMeetingImpl> PastMeetings;
 		private Calendar Date;
 		
 		/**
@@ -164,8 +165,9 @@ public class ContactManagerImpl implements ContactManager {
 			List<Meeting> result = new ArrayList<Meeting>();
 			meetings.addAll(result);
 			quickSort(result);
-			return result;
-		}
+			return result;			
+			}
+		
 		/**
 		 * 
 		 */
@@ -202,8 +204,58 @@ public class ContactManagerImpl implements ContactManager {
 				ex.printStackTrace();
 			}
 		}
+		/**
+		 * 
+		 * 
+		 */
 		
 		public void addMeetingNotes(int id, String text){
-			for(int i = 0; i < FutureMeetings.size(); )
+			try {
+				boolean illegalArgument = false;
+				int index = 0;
+				for(int i = 0; i < FutureMeetings.size(); i++){
+					if(FutureMeetings.get(i).getID() == id){
+						illegalArgument = true;
+						if(Date.before(FutureMeetings.get(i).getDate())){
+							throw new IllegalStateException();
+						}
+						index = i;
+					}
+				}
+				if(!illegalArgument){
+					throw new IllegalArgumentException();
+				}
+				PastMeetingImpl meeting = new PastMeetingImpl(FutureMeetings.get(index), text);
+				PastMeetings.add(meeting);
+				FutureMeetings.remove(index);
+			} catch (NullPointerException ex){
+				ex.printStackTrace();
+			}
 		}
+		
+		/**
+		 * 
+		 */
+		
+		public void addNewContact(String name, String notes){
+			try{
+				ContactImpl c = new ContactImpl(name, notes);
+				Contacts.add(c);
+			} catch (NullPointerException ex){
+				ex.printStackTrace();
+			}
+		}
+		
+		/**
+		 * 
+		 */
+		
+		public Set<Contact> getContacts(int... id){
+			Set<ContactImpl> result = new LinkedHashSet<ContactImpl>();
+			Iterator it = Contacts.iterator();
+			for(int i = 0; i < id.length; i++){
+	
+			}
+		}
+		
 }
