@@ -23,7 +23,7 @@ public class ContactManagerImpl implements ContactManager {
 			if(date.before(Date)){
 				throw new IllegalArgumentException("Unheld meetings can only be set in the future");
 			}
-			Meeting m = new FutureMeetingImpl(date, attendees);
+			FutureMeetingImpl m = new FutureMeetingImpl(date, attendees);
 			FutureMeetings.add(m);
 			return m.getID();
 		}
@@ -71,7 +71,7 @@ public class ContactManagerImpl implements ContactManager {
 		
 		/**
 		 * Checks FutureMeetings and PastMeetings for the meeting with the ID and then upcasts
-		 * it to MeetingImpl
+		 * it to Meeting
 		 */
 		public Meeting getMeeting(int id){
 			for(int i = 0; i < FutureMeetings.size(); i++){
@@ -159,7 +159,8 @@ public class ContactManagerImpl implements ContactManager {
 			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
 			for(int i = 0; i < FutureMeetings.size(); i++){
 				if(FutureMeetings.get(i).getDate().compareTo(date) == 0){
-					meetings.add(FutureMeetings.get(i));
+					Meeting m = (Meeting) FutureMeetings.get(i);
+					meetings.add(m);
 				}
 			}
 			List<Meeting> result = new ArrayList<Meeting>();
@@ -176,16 +177,21 @@ public class ContactManagerImpl implements ContactManager {
 			if(!Contacts.contains(contact)){
 				throw new IllegalArgumentException("This contact does not exist");
 			}
-			Set<PastMeeting> meetings = new LinkedHashSet<PastMeeting>();
+			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
 			for(int i = 0; i < PastMeetings.size(); i++){
 				if(PastMeetings.get(i).getContacts().contains(contact)){
+					Meeting m = (Meeting) PastMeetings.get(i);
 					meetings.add(PastMeetings.get(i));
 				}
 			}
 			//need to cast the PastMeetings to meetings and back
+			List<Meeting> temp = new ArrayList<Meeting>();
+			meetings.addAll(temp);
+			quickSort(temp);
 			List<PastMeeting> result = new ArrayList<PastMeeting>();
-			meetings.addAll(result);
-			quickSort(result);
+			for(int i = 0; i < temp.size(); i++){
+				PastMeeting m = (PastMeeting) 
+			}
 			return result;
 		}
 		
@@ -289,7 +295,7 @@ public class ContactManagerImpl implements ContactManager {
 			return null;
 			}
 
-		public void Flush(){
+		public void Flush(){ 
 		}
 	
 }
