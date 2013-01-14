@@ -132,7 +132,7 @@ public class ContactManagerImpl implements ContactManager {
 		
 		public List<Meeting> getFutureMeetingList(Contact contact){
 			if(!Contacts.contains(contact)){
-				throw new IllegalArgumentException("That contact does not exist");
+				throw new IllegalArgumentException("This contact does not exist");
 			}
 			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
 			for(int i = 0; i < FutureMeetings.size(); i++){
@@ -146,6 +146,11 @@ public class ContactManagerImpl implements ContactManager {
 			return result;
 		}
 		
+		/**
+		 * This method sorts the list of meetings being held on a certain day by calling
+		 * the quickSort method. A lack of duplicates is ensured by using a set prior to sorting
+		 * the list.
+		 */
 		public List<Meeting> getFutureMeetingList(Calendar date){
 			if(date.before(Date)){
 				throw new IllegalArgumentException("That's in the past");
@@ -160,5 +165,45 @@ public class ContactManagerImpl implements ContactManager {
 			meetings.addAll(result);
 			quickSort(result);
 			return result;
+		}
+		/**
+		 * 
+		 */
+		
+		public List<PastMeeting> getPastMeetingList(Contact contact){
+			if(!Contacts.contains(contact)){
+				throw new IllegalArgumentException("This contact does not exist");
+			}
+			Set<PastMeeting> meetings = new LinkedHashSet<PastMeeting>();
+			for(int i = 0; i < PastMeetings.size(); i++){
+				if(PastMeetings.get(i).getContacts().contains(contact)){
+					meetings.add(PastMeetings.get(i));
+				}
+			}
+			//need to cast the PastMeetings to meetings and back
+			List<PastMeeting> result = new ArrayList<PastMeeting>();
+			meetings.addAll(result);
+			quickSort(result);
+			return result;
+		}
+		
+		/**
+		 * 
+		 */
+		
+		public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text){
+			try{
+				if(contacts.isEmpty() || !Contacts.contains(contacts)){
+					throw new IllegalArgumentException();
+				}
+				PastMeetingImpl meeting = new PastMeetingImpl(date, contacts, text);
+				PastMeetings.add(meeting);
+			} catch (NullPointerException ex){
+				ex.printStackTrace();
+			}
+		}
+		
+		public void addMeetingNotes(int id, String text){
+			for(int i = 0; i < FutureMeetings.size(); )
 		}
 }
