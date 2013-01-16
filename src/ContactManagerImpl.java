@@ -329,23 +329,19 @@ public class ContactManagerImpl implements ContactManager {
 		
 		public Set<Contact> getContacts(int... id){
 			try{
-				Set<Contact> result = new LinkedHashSet<Contact>();
-				ArrayList<ContactImpl> temp = new ArrayList<ContactImpl>();
-				Contacts.addAll(temp);
-				boolean contactExists = false;
+				Set<Contact> result = new LinkedHashSet<Contact>(); 
 				for(int i = 0; i < id.length; i++){
-					contactExists = false;
-					for(int j = 0; j < temp.size(); j++){
-						if(temp.get(j).getId() == id[i]){
-							result.add(temp.get(j));
-							contactExists = true;
+					Iterator<Contact> itr = Contacts.iterator();
+					while(itr.hasNext()){
+						if(itr.next().getId() == id[i]){
+							result.add(itr.next());
 						}
 					}
-					if(!contactExists){
-						throw new IllegalArgumentException();
-					}
-			}
-			return result;
+				}
+				if(!(result.size() == id.length)){
+					throw new IllegalArgumentException();
+				}
+				return result;
 			}catch(IllegalArgumentException ex){
 				ex.printStackTrace();
 				System.out.println("At least one of those contacts does not exist");
@@ -399,7 +395,11 @@ public class ContactManagerImpl implements ContactManager {
 			addNewContact("Joseph Heller", "I'll catch you in Catch 22");
 			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");
 			
+			System.out.println(IDnumbers);
+			
 			Set<Contact> cont = new LinkedHashSet<Contact>();
+			cont = getContacts("Jospeh Heller");
+			
 			cont = getContacts(1,2,4,8);
 			
 			cont = getContacts(1,2,4);
