@@ -92,14 +92,14 @@ public class ContactManagerImpl implements ContactManager {
 				}
 				for (int i = 0; i < FutureMeetings.size(); i++){
 					if(FutureMeetings.get(i).getID() == id){
-						FutureMeeting m = (FutureMeeting) FutureMeetings.get(i);
+						FutureMeeting m = (FutureMeeting)FutureMeetings.get(i);
 						return m;
 					}
 				}
 				return null;
 			}catch (IllegalArgumentException ex){
 				ex.printStackTrace();
-				System.out.println("");
+				System.out.println("This meeting has already taken place");
 				return null;
 			}
 			
@@ -351,18 +351,16 @@ public class ContactManagerImpl implements ContactManager {
 		
 		public Set<Contact> getContacts(String name){
 			try{
-				ArrayList<ContactImpl> temp = new ArrayList<ContactImpl>();
-				Contacts.addAll(temp);
 				Set<Contact> result = new LinkedHashSet<Contact>();
-				for (int i = 0; i < temp.size(); i++){
-					if(temp.get(i).getName().equals(name)){
-						Contact c = (Contact) temp.get(i);
+				Iterator<Contact> itr = Contacts.iterator();
+				while (itr.hasNext()){
+					Contact c = itr.next();
+					if(c.getName().equals(name)){
 						result.add(c);
 					}
-					
-				} 
+				}
 				return result;
-			}	catch (NullPointerException ex){
+			}catch (NullPointerException ex){
 					ex.printStackTrace();
 				}
 			return null;
@@ -407,8 +405,8 @@ public class ContactManagerImpl implements ContactManager {
 			
 			int i = addFutureMeeting(cont, date);
 			System.out.println(i);//i should equal 7
-			FutureMeeting m = getFutureMeeting(7);
-			m = getFutureMeeting(8);
+			//FutureMeeting m = getFutureMeeting(7);
+			//m = getFutureMeeting(8);
 			
 			Calendar date2 = new GregorianCalendar(2013, 6, 5);
 			cont = getContacts(6,5,4);
