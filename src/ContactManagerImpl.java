@@ -328,23 +328,29 @@ public class ContactManagerImpl implements ContactManager {
 		 */
 		
 		public Set<Contact> getContacts(int... id){
-			Set<Contact> result = new LinkedHashSet<Contact>();
-			ArrayList<ContactImpl> temp = new ArrayList<ContactImpl>();
-			Contacts.addAll(temp);
-			boolean contactExists = false;
-			for(int i = 0; i < id.length; i++){
-				contactExists = false;
-				for(int j = 0; j < temp.size(); j++){
-					if(temp.get(j).getId() == id[i]){
-						result.add(temp.get(j));
-						contactExists = true;
+			try{
+				Set<Contact> result = new LinkedHashSet<Contact>();
+				ArrayList<ContactImpl> temp = new ArrayList<ContactImpl>();
+				Contacts.addAll(temp);
+				boolean contactExists = false;
+				for(int i = 0; i < id.length; i++){
+					contactExists = false;
+					for(int j = 0; j < temp.size(); j++){
+						if(temp.get(j).getId() == id[i]){
+							result.add(temp.get(j));
+							contactExists = true;
+						}
 					}
-				}
-				if(!contactExists){
-					throw new IllegalArgumentException("There is no contact with that ID");
-				}
+					if(!contactExists){
+						throw new IllegalArgumentException();
+					}
 			}
 			return result;
+			}catch(IllegalArgumentException ex){
+				ex.printStackTrace();
+				System.out.println("At least one of those contacts does not exist");
+				return null;
+			}
 		}
 		
 		public Set<Contact> getContacts(String name){
