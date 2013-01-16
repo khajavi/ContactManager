@@ -379,10 +379,60 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		public static void main (String [] args){
-			ContactManager m = new ContactManagerImpl();
-			m.Run();
+			ContactManagerImpl cm = new ContactManagerImpl();
+			cm.launch();
 		}
 		
+		private void launch(){
+			
+			//contact numbers 1-6
+			addNewContact("Tom Wolfe", "Written nothing good for years");
+			addNewContact("Martin Amis", "Martin my dad is Kingsley Amis Amis");
+			addNewContact("Bret Easton Ellis", "There is some sick going on in my cranium");
+			addNewContact("Douglas Adams", "funniest writer dead");
+			addNewContact("Joseph Heller", "I'll catch you in Catch 22");
+			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");
+			
+			Set<Contact> cont = new LinkedHashSet<Contact>();
+			cont = getContacts(1,2,4,8);
+			
+			cont = getContacts(1,2,4);
+			Calendar date = new GregorianCalendar(2013, 7, 8);
+			
+			int i = addFutureMeeting(cont, date);
+			System.out.println(i);//i should equal 7
+			FutureMeeting m = getFutureMeeting(7);
+			m = getFutureMeeting(8);
+			
+			Calendar date2 = new GregorianCalendar(2013, 6, 5);
+			cont = getContacts(6,5,4);
+			i = addFutureMeeting(cont, date2);
+			System.out.println(i); //i should equal 8
+			
+			Calendar pastm = new GregorianCalendar(2012, 6, 5);
+			addNewPastMeeting(cont, pastm, "I see dead people");//meeting id should equal 9
+			
+			cont = getContacts(4,5);
+			addNewPastMeeting(cont, pastm, "Hitchhiker's or Catch 22?");//meeting id should be 10
+			
+			PastMeeting pm = getPastMeeting(9);
+			String str = pm.getNotes();
+			System.out.println(str);
+			
+			pm = getPastMeeting(10);
+			str = pm.getNotes();
+			System.out.println(str);
+			
+			Calendar d = new GregorianCalendar();
+			addFutureMeeting(cont, d);//id should be 11
+			
+			addMeetingNotes(11,"Discussions ongoing");
+			pm = getPastMeeting(11);
+			str = pm.getNotes();
+			System.out.println(str);
 		
+			
+			
+		}
 	
 }
