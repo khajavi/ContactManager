@@ -333,12 +333,13 @@ public class ContactManagerImpl implements ContactManager {
 				for(int i = 0; i < id.length; i++){
 					Iterator<Contact> itr = Contacts.iterator();
 					while(itr.hasNext()){
-						if(itr.next().getId() == id[i]){
-							result.add(itr.next());
+						Contact c = itr.next();
+						if(c.getId() == id[i]){
+							result.add(c);
 						}
 					}
 				}
-				if(!(result.size() == id.length)){
+				if(!(result.size() == id.length - 1)){
 					throw new IllegalArgumentException();
 				}
 				return result;
@@ -397,7 +398,13 @@ public class ContactManagerImpl implements ContactManager {
 			
 			Set<Contact> cont = new LinkedHashSet<Contact>();
 			cont = getContacts("Jospeh Heller");
-			
+			Iterator<Contact> itr = Contacts.iterator();
+			while(itr.hasNext()){
+				Contact c = itr.next();
+				System.out.println(c.getName());
+			}
+			System.out.println();
+			*/
 			cont = getContacts(1,2,4,8);
 			
 			cont = getContacts(1,2,4);
@@ -415,13 +422,15 @@ public class ContactManagerImpl implements ContactManager {
 			
 			Calendar pastm = new GregorianCalendar(2012, 6, 5);
 			addNewPastMeeting(cont, pastm, "I see dead people");//meeting id should equal 9
-			
+			System.out.println("checkpoint 1");
 			cont = getContacts(4,5);
 			addNewPastMeeting(cont, pastm, "Hitchhiker's or Catch 22?");//meeting id should be 10
+			System.out.println("Checkpoint 2");
 			
-			PastMeeting pm = getPastMeeting(9);
+			PastMeeting pm = getPastMeeting(8);
 			String str = pm.getNotes();
 			System.out.println(str);
+			System.out.println("Checkpoint 3");
 			
 			pm = getPastMeeting(10);
 			str = pm.getNotes();
