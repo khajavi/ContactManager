@@ -36,7 +36,7 @@ public class ContactManagerImpl implements ContactManager {
 					if(date.before(Date)){
 						throw new IllegalArgumentException();
 					}
-					Meeting m = new MeetingImpl(date, attendees);
+					Meeting m = new FutureMeetingImpl(attendees, date);
 					FutureMeetings.add(m);
 					return m.getID();
 			} catch (IllegalArgumentException ex){
@@ -260,7 +260,7 @@ public class ContactManagerImpl implements ContactManager {
 				if(contacts.isEmpty() || !Contacts.containsAll(contacts)){
 					throw new IllegalArgumentException();
 				}
-				PastMeetingImpl meeting = new PastMeetingImpl(date, contacts, text);
+				PastMeeting meeting = new PastMeetingImpl(date, contacts, text);
 				PastMeeting result = (PastMeeting)meeting;
 				PastMeetings.add(result);
 			} catch (IllegalArgumentException ex){
@@ -280,7 +280,7 @@ public class ContactManagerImpl implements ContactManager {
 		 * 
 		 * 
 		 */
-		
+		//need to account for circumstance when just adding notes
 		public void addMeetingNotes(int id, String text){
 			try {
 				boolean illegalArgument = false;
@@ -298,10 +298,8 @@ public class ContactManagerImpl implements ContactManager {
 				if(!illegalArgument){
 					throw new IllegalArgumentException();
 				}
-				PastMeetingImpl meeting = (PastMeetingImpl)FutureMeetings.get(index);
-				meeting.addNotes(text);
-				PastMeeting result = (PastMeeting) meeting;
-				PastMeetings.add(result); 
+				PastMeeting meeting = new PastMeetingImpl(FutureMeetings.get(index).getDate(), FutureMeetings.get(index).getContacts(),text, id);
+				PastMeetings.add(meeting); 
 				FutureMeetings.remove(index);
 			} catch (NullPointerException ex){
 				ex.printStackTrace();
@@ -417,8 +415,8 @@ public class ContactManagerImpl implements ContactManager {
 			
 			int i = addFutureMeeting(cont, date);
 			System.out.println(i);//i should equal 7
-			//FutureMeeting m = getFutureMeeting(7);
-			//m = getFutureMeeting(8);
+			FutureMeeting m = getFutureMeeting(7);
+			m = getFutureMeeting(8);
 			
 			Calendar date2 = new GregorianCalendar(2013, 6, 5);
 			cont = getContacts(6,5,4);
@@ -450,9 +448,6 @@ public class ContactManagerImpl implements ContactManager {
 			pm = getPastMeeting(11);
 			str = pm.getNotes();
 			System.out.println(str);
-		
-			
-			
 		}
 	
 }
