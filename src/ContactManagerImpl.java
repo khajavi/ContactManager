@@ -434,7 +434,7 @@ public class ContactManagerImpl implements ContactManager {
 			addNewPastMeeting(cont, pastm, "Hitchhiker's or Catch 22?");//meeting id should be 10
 			System.out.println("Checkpoint 2");
 			
-			PastMeeting pm = getPastMeeting(8);
+			PastMeeting pm = getPastMeeting(9);
 			String str = pm.getNotes();
 			System.out.println(str);
 			System.out.println("Checkpoint 3");
