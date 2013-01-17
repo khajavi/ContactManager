@@ -339,7 +339,7 @@ public class ContactManagerImpl implements ContactManager {
 						}
 					}
 				}
-				if(!(result.size() == id.length - 1)){
+				if(!(result.size() == id.length + 1)){
 					throw new IllegalArgumentException();
 				}
 				return result;
@@ -363,8 +363,8 @@ public class ContactManagerImpl implements ContactManager {
 				return result;
 			}catch (NullPointerException ex){
 					ex.printStackTrace();
+					return null;
 				}
-			return null;
 			}
 
 		@Override
@@ -394,17 +394,19 @@ public class ContactManagerImpl implements ContactManager {
 			addNewContact("Joseph Heller", "I'll catch you in Catch 22");
 			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");
 			
-			System.out.println(IDnumbers);
+			System.out.println("Contacts added");
 			
 			Set<Contact> cont = new LinkedHashSet<Contact>();
-			cont = getContacts("Jospeh Heller");
-			Iterator<Contact> itr = Contacts.iterator();
-			while(itr.hasNext()){
+			cont = getContacts("Joseph Heller");
+			System.out.println("Checking for Heller");
+			Iterator<Contact> itr = cont.iterator();
+			do{
 				Contact c = itr.next();
 				System.out.println(c.getName());
-			}
-			System.out.println();
-			*/
+				System.out.println("Why no name?");
+			}while (itr.hasNext());
+			System.out.println("Checked for Heller");
+			
 			cont = getContacts(1,2,4,8);
 			
 			cont = getContacts(1,2,4);
