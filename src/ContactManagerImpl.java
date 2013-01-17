@@ -257,7 +257,7 @@ public class ContactManagerImpl implements ContactManager {
 		
 		public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text){
 			try{
-				if(contacts.isEmpty() || !Contacts.contains(contacts)){
+				if(contacts.isEmpty() || !Contacts.containsAll(contacts)){
 					throw new IllegalArgumentException();
 				}
 				PastMeetingImpl meeting = new PastMeetingImpl(date, contacts, text);
@@ -324,7 +324,8 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		/**
-		 * may need to upcast everything to a contact.
+		 * Could improve method by parsing the array of ids to a set in case there are duplicate
+		 * ids. 
 		 */
 		
 		public Set<Contact> getContacts(int... id){
@@ -339,7 +340,7 @@ public class ContactManagerImpl implements ContactManager {
 						}
 					}
 				}
-				if(!(result.size() == id.length + 1)){
+				if(result.size() != id.length){
 					throw new IllegalArgumentException();
 				}
 				return result;
@@ -408,8 +409,10 @@ public class ContactManagerImpl implements ContactManager {
 			System.out.println("Checked for Heller");
 			
 			cont = getContacts(1,2,4,8);
+			System.out.println("Was supposed to throw illegArgsException");
 			
 			cont = getContacts(1,2,4);
+			System.out.println("Was not supposed to throw one");
 			Calendar date = new GregorianCalendar(2013, 7, 8);
 			
 			int i = addFutureMeeting(cont, date);
@@ -419,6 +422,8 @@ public class ContactManagerImpl implements ContactManager {
 			
 			Calendar date2 = new GregorianCalendar(2013, 6, 5);
 			cont = getContacts(6,5,4);
+			System.out.println("Was not supposed to throw one");
+			
 			i = addFutureMeeting(cont, date2);
 			System.out.println(i); //i should equal 8
 			
