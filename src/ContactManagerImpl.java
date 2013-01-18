@@ -1,5 +1,8 @@
 import java.util.*;
-import java.io.File; 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class ContactManagerImpl implements ContactManager {
 		
@@ -362,12 +365,22 @@ public class ContactManagerImpl implements ContactManager {
 
 		@Override
 		public void flush() {
-			deleteFile();
+		PrintWriter printwriter = null;
 			try{
+				deleteFile();
 				File file = new File(filename);
+				printwriter = new PrintWriter(file);
 				List<String> data = generateData();
+				for(int i = 0; i < data.size(); i++){
+					printwriter.write(data.get(i));
+				}
+			}catch(FileNotFoundException ex){
+				ex.printStackTrace();
+			}finally{
+				if(printwriter != null){
+					printwriter.close(); 
+				}
 			}
-			
 		}
 		
 		/**
@@ -385,7 +398,8 @@ public class ContactManagerImpl implements ContactManager {
 				data.add(s);
 			}
 			for(int i = 0; i < FutureMeetings.size(); i++){
-				s = "Meeting" + "," + FutureMeetings.get(i).getID() + "," + FutureMeetings.get(i).getDate() + ",";
+				s = "Meeting" + "," + FutureMeetings.get(i).getID() + ",";
+				s = s + FutureMeetings.get(i).get(Calendar.YEAR) + "/" + FutureMeetings.get(i).get(Calendar.MONTH) + "/" + FutureMeetings.get(i).get(Calendar.DATE) +  ",";
 				itr = FutureMeetings.get(i).getContacts().iterator();
 				while(itr.hasNext()){
 					s = s + itr.next().getId() + ",";
@@ -414,8 +428,8 @@ public class ContactManagerImpl implements ContactManager {
 			try{
 				File f = new File(filename);
 				f.delete();
-			}catch (FileNotFoundException ex){
-			}catch (IOException ex){
+			}catch (NullPointerException ex){
+				ex.printStackTrace();
 			}
 		}
 		
@@ -458,12 +472,12 @@ public class ContactManagerImpl implements ContactManager {
 			cont = getContacts(1,2,4);
 			System.out.println("Was not supposed to throw one");
 			Calendar date = new GregorianCalendar(2013, 7, 8);
-			
+			System.out.println(date.get(Calendar.YEAR));
 			int i = addFutureMeeting(cont, date);
 			System.out.println(i);//i should equal 7
 			FutureMeeting m = getFutureMeeting(7);
 			m = getFutureMeeting(8);
-			
+			//System.out.println(m.getDate().toString());
 			Calendar date2 = new GregorianCalendar(2013, 6, 5);
 			cont = getContacts(6,5,4);
 			System.out.println("Was not supposed to throw one");
