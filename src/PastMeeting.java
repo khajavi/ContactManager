@@ -11,4 +11,11 @@ public interface PastMeeting extends Meeting {
 	 * If there are no notes the empty string is returned
 	 */
 	String getNotes();
+	
+	/**
+	 * Adds the notes taken at the meeting
+	 * 
+	 * @param Notes A string containing notes from the meeting
+	 */
+	void addNotes(String notes);
 }

@@ -7,14 +7,18 @@ public class MeetingImpl implements Meeting {
 	protected int ID;
 	protected Calendar Date;
 	protected Set<Contact> Attendees;
-	//private String Notes;
 	
 	public MeetingImpl(Calendar Date, Set<Contact> Attendees){
 		ContactManagerImpl.IDnumbers++;
 		ID = ContactManagerImpl.IDnumbers;
 		this.Date = Date;
 		this.Attendees = Attendees;
-		//this.Notes = "";
+	}
+	
+	public MeetingImpl(Calendar Date, Set <Contact> Attendees, int id){
+		this.ID = id;
+		this.Date = Date;
+		this.Attendees = Attendees;
 	}
 	
 	public int getID() {
@@ -28,9 +32,4 @@ public class MeetingImpl implements Meeting {
 	public Set<Contact> getContacts() {
 		return Attendees;
 	}
-	
-	/**
-	public String getNotes(){
-		return Notes;
-	}*/
 }

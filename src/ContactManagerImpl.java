@@ -1,26 +1,20 @@
 import java.util.*;
-import java.lang.Exception;
-import java.lang.reflect.Array;
+import java.io.File; 
 
-//Add a field meetings?
-//need to change everything from meeting, etc to meetingImpl
-//don't want date field, get a new instance each time I think.
 public class ContactManagerImpl implements ContactManager {
-
+		
+		private final String filename; 
 		public static int IDnumbers;
 		private LinkedHashSet<Contact> Contacts;
 		private ArrayList<Meeting> FutureMeetings;
 		private ArrayList<PastMeeting> PastMeetings;
-		//private Calendar Date;
 		
-		public ContactManagerImpl(){
-			//This constructor is only temporary, it will work by reading the text document and then
-			//initialising everything from there
-
+		
+		public ContactManagerImpl(String filename){
+			this.filename = filename;
 			this.Contacts = new LinkedHashSet<Contact>();
 			this.FutureMeetings = new ArrayList<Meeting>();
 			this.PastMeetings = new ArrayList<PastMeeting>();
-			//this.Date = Calendar.getInstance();
 		}
 		
 		/**
@@ -368,9 +362,61 @@ public class ContactManagerImpl implements ContactManager {
 
 		@Override
 		public void flush() {
-
-			// TODO Auto-generated method stub
+			deleteFile();
+			try{
+				File file = new File(filename);
+				List<String> data = generateData();
+			}
 			
+		}
+		
+		/**
+		 * Converts the contacts and meetings held by the Contact Manager into a String format so
+		 * that they can be written to the file created by the Flush method.
+		 */
+		//Change so add type, id, attendees, notes
+		public List<String> generateData(){
+			
+			List<String> data = new ArrayList<String>();
+			Iterator<Contact> itr = Contacts.iterator();
+			String s;
+			while(itr.hasNext()){
+				s = "Contact" + "," + itr.next().getName() + "," +  itr.next().getId() + "," + itr.next().getNotes();
+				data.add(s);
+			}
+			for(int i = 0; i < FutureMeetings.size(); i++){
+				s = "Meeting" + "," + FutureMeetings.get(i).getID() + "," + FutureMeetings.get(i).getDate() + ",";
+				itr = FutureMeetings.get(i).getContacts().iterator();
+				while(itr.hasNext()){
+					s = s + itr.next().getId() + ",";
+				}
+				data.add(s);
+			}
+			for(int i = 0; i < PastMeetings.size(); i++){
+				s = "PastMeeting" + "," + PastMeetings.get(i).getID() + "," + PastMeetings.get(i).getDate() + ",";
+				itr = PastMeetings.get(i).getContacts().iterator();
+				while(itr.hasNext()){
+					s = s + itr.next().getId() + ",";
+				}
+				s = s + "notes:" + PastMeetings.get(i).getNotes();
+				data.add(s);
+			}
+			return data;
+		}
+		
+		/**
+		 * Deletes the file holding the data that will be used when the program is opened
+		 * 
+		 * @throws FileNotFoundException if the file cannot be found
+		 * @throws IOException
+		 */
+		public void deleteFile(){
+			try{
+				File f = new File(filename);
+				f.delete();
+			}catch (FileNotFoundException ex){
+			}catch (IOException ex){
+			}
 		}
 		
 		public void Exit(){
