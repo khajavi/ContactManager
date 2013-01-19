@@ -29,8 +29,10 @@ public class ContactManagerImpl implements ContactManager {
 				while ((line = in.readLine()) != null){
 					if(line.startsWith("Contact")){
 						loadDataContact(line);
-					}else{
+					}else if (line.startsWith("Meeting")){
 						loadDataMeeting(line);
+					}else{
+						loadDataPastMeeting(line);
 					}
 				}
 			}catch(FileNotFoundException ex){
@@ -69,6 +71,38 @@ public class ContactManagerImpl implements ContactManager {
 				Contacts.add(c);
 			}catch(NullPointerException ex){
 				ex.printStackTrace();
+			}
+		}
+		
+		public void loadDataMeeting(String data){
+			data = data.substring(8);
+			int id = 0;
+			for (int i = 0; i < data.length(); i++){
+				if(data.charAt(i) == ','){
+					id = Integer.parseInt(data.substring(0, i));
+					data = data.substring(i + 1);
+					return;
+				}
+			}
+			int year = Integer.parseInt(data.substring(0,4));
+			data = data.substring(5);
+			int month = Integer.parseInt(data.substring(0,2));
+			data = data.substring(3);
+			int day = Integer.parseInt(data.substring(0, 2));
+			data = data.substring(3);
+			Set<Contact> contacts = new LinkedHashSet<Contact>();
+			for(int i = 0; i < data.length(); i++){
+				if(data.charAt(i) == ','){
+					int getContact = Integer.parseInt(data.substring(0, i));
+					Iterator<Contact> itr = Contacts.iterator();
+					while(itr.hasNext()){
+						if(itr.next().getId() == getContact){
+							contacts.add(itr.next());
+						}
+					}
+					data = data.substring(i + 1);
+					i = 0;
+				}
 			}
 		}
 		
@@ -448,12 +482,13 @@ public class ContactManagerImpl implements ContactManager {
 			Iterator<Contact> itr = Contacts.iterator();
 			String s;
 			while(itr.hasNext()){
-				s = "Contact" + "," + itr.next().getName() + "," +  itr.next().getId() + "," + itr.next().getNotes();
+				s = "Name:" + itr.next().getName() + "," + "Contact Id:" +  itr.next().getId() + "," + "Notes:" +  itr.next().getNotes();
 				data.add(s);
 			}
 			for(int i = 0; i < FutureMeetings.size(); i++){
-				s = "Meeting" + "," + FutureMeetings.get(i).getID() + ",";
-				s = s + FutureMeetings.get(i).get(Calendar.YEAR) + "/" + FutureMeetings.get(i).get(Calendar.MONTH) + "/" + FutureMeetings.get(i).get(Calendar.DATE) +  ",";
+				s = "Meeting Id:" + FutureMeetings.get(i).getID() + ",";
+				s = s + "Date:" +  FutureMeetings.get(i).get(Calendar.YEAR) + "/" + FutureMeetings.get(i).get(Calendar.MONTH) + "/" + FutureMeetings.get(i).get(Calendar.DATE) +  ",";
+				s = s + "Contact Ids"; 
 				itr = FutureMeetings.get(i).getContacts().iterator();
 				while(itr.hasNext()){
 					s = s + itr.next().getId() + ",";
@@ -461,12 +496,14 @@ public class ContactManagerImpl implements ContactManager {
 				data.add(s);
 			}
 			for(int i = 0; i < PastMeetings.size(); i++){
-				s = "PastMeeting" + "," + PastMeetings.get(i).getID() + "," + PastMeetings.get(i).getDate() + ",";
+				s = "PastMeeting Id:" + PastMeetings.get(i).getID() + ",";
+				s = s + "Date:" + PastMeetings.get(i).get(Calendar.YEAR) + "/" + PastMeetings.get(i).get(Calendar.MONTH) + "/" + PastMeetings.get(i).get(Calendar.DATE) +  ",";
 				itr = PastMeetings.get(i).getContacts().iterator();
+				s = s + "Contact Ids:";
 				while(itr.hasNext()){
 					s = s + itr.next().getId() + ",";
 				}
-				s = s + "notes:" + PastMeetings.get(i).getNotes();
+				s = s + "Notes:" + PastMeetings.get(i).getNotes();
 				data.add(s);
 			}
 			return data;
