@@ -12,6 +12,12 @@ public class ContactImpl implements Contact {
 		this.Notes = Notes;
 	}
 	
+	public ContactImpl(String name, String notes, int id){
+		this.Name = name;
+		this.Notes = notes;
+		this.ID = id;
+	}
+	
 	public ContactImpl(String Name){
 		ContactManagerImpl.IDnumbers++;
 		ID = ContactManagerImpl.IDnumbers;

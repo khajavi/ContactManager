@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ContactManagerImpl implements ContactManager {
 		
-		private final String filename; 
+		public final static String filename; 
 		public static int IDnumbers;
 		private LinkedHashSet<Contact> Contacts;
 		private ArrayList<Meeting> FutureMeetings;
@@ -47,6 +49,33 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		public void loadDataContact(String data){
+			Pattern getName = Pattern.compile("Name:\\w[\\s[\\w]]*,");
+			Pattern getContactId = Pattern.compile("Contact Id:\\d*");
+			Pattern getNotes = Pattern.compile("Notes:"); 
+			String name;
+			Matcher m = getName.matcher(data);
+			while(m.find()){
+				name = m.group().substring(5);
+			}
+			int id;
+			m = getContactId.matcher(data);
+			Pattern findId = Pattern.compile("[0-9]*");
+			String stringId;
+			while(m.find()){
+				stringId = m.group();
+			}
+			Matcher m = findId.matcher(stringId);
+			while(m.find()){
+				id = Integer.parseInt(m.group());
+			}
+			m = getNotes.matcher(data);
+			String Notes;
+			while(m.find()){
+				Notes = data.substring(m.end() + 1);
+			}
+			Contact c = new ContactImpl(name, Notes, id);
+			/**
+			Previous implementation in cas regex doesn't work
 			String name = null;
 			int id = 0;
 			String notes;
@@ -72,7 +101,7 @@ public class ContactManagerImpl implements ContactManager {
 			}catch(NullPointerException ex){
 				ex.printStackTrace();
 			}
-		}
+		}*/
 		
 		public void loadDataMeeting(String data){
 			data = data.substring(8);
