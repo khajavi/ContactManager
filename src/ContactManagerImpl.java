@@ -3,6 +3,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class ContactManagerImpl implements ContactManager {
 		
@@ -18,6 +20,56 @@ public class ContactManagerImpl implements ContactManager {
 			this.Contacts = new LinkedHashSet<Contact>();
 			this.FutureMeetings = new ArrayList<Meeting>();
 			this.PastMeetings = new ArrayList<PastMeeting>();
+			
+			File file = new File(filename);
+			BufferedReader in = null;
+			try{
+				in = new BufferedReader(new FileReader(file));
+				String line;
+				while ((line = in.readLine()) != null){
+					if(line.startsWith("Contact")){
+						loadDataContact(line);
+					}else{
+						loadDataMeeting(line);
+					}
+				}
+			}catch(FileNotFoundException ex){
+				ex.printStackTrace();
+			}catch(IOException ex){
+				ex.printStackTrace();
+			}finally{
+				if(in != null){
+					in.close();
+				}
+			}
+		}
+		
+		public void loadDataContact(String data){
+			String name = null;
+			int id = 0;
+			String notes;
+			data = data.substring(8);
+			for(int i = 0; i < data.length(); i++){
+				if(data.charAt(i) == ','){
+					name = data.substring(0, i);
+					data = data.substring(i + 1);
+					return;
+				}
+			}
+			for(int i = 0; i < data.length(); i++){
+				if(data.charAt(i) == ','){
+					id = Integer.parseInt(data.substring(0, i));
+					data = data.substring(i + 1);
+					return;
+				}
+			}
+			notes = data;
+			try{
+				Contact c = new ContactImpl(name, notes, id);
+				Contacts.add(c);
+			}catch(NullPointerException ex){
+				ex.printStackTrace();
+			}
 		}
 		
 		/**
@@ -370,9 +422,11 @@ public class ContactManagerImpl implements ContactManager {
 				deleteFile();
 				File file = new File(filename);
 				printwriter = new PrintWriter(file);
+				printwriter.println(IDnumbers);
+				printwriter.println();
 				List<String> data = generateData();
 				for(int i = 0; i < data.size(); i++){
-					printwriter.write(data.get(i));
+					printwriter.println(data.get(i));
 				}
 			}catch(FileNotFoundException ex){
 				ex.printStackTrace();
