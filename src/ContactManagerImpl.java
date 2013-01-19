@@ -22,8 +22,10 @@ public class ContactManagerImpl implements ContactManager {
 			this.Contacts = new LinkedHashSet<Contact>();
 			this.FutureMeetings = new ArrayList<Meeting>();
 			this.PastMeetings = new ArrayList<PastMeeting>();
-			
 			File file = new File(filename);
+			try{
+				file.createNewFile();
+			}catch(IOException ex){
 			BufferedReader in = null;
 			try{
 				in = new BufferedReader(new FileReader(file));
@@ -35,19 +37,19 @@ public class ContactManagerImpl implements ContactManager {
 						loadMeeting(line);
 					}
 				}
-			}catch(FileNotFoundException ex){
-				ex.printStackTrace();
-			}catch(IOException ex){
-				ex.printStackTrace();
+			}catch(FileNotFoundException ex1){
+				ex1.printStackTrace();
+			}catch(IOException ex1){
+				ex1.printStackTrace();
 			}finally{
 				try{
 					in.close();
-				}catch (IOException ex){
-					ex.printStackTrace();
+				}catch (IOException ex1){
+					ex1.printStackTrace();
 				}
 			}
 		}
-		
+		}
 		//need to add try
 		public void loadDataContact(String data){
 			Pattern getName = Pattern.compile("Name:\\w[\\s[\\w]]*,");
@@ -562,7 +564,7 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		public static void main (String [] args){
-			ContactManagerImpl cm = new ContactManagerImpl();
+			ContactManagerImpl cm = new ContactManagerImpl("/Users/williamhogarth/Documents/workspace/Contact Manager/src/contacts.txt");
 			cm.launch();
 		}
 		
