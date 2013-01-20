@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+//forgot about dealing with IDnumbers
 public class ContactManagerImpl implements ContactManager {
 		
 		private final String filename; 
@@ -484,19 +484,20 @@ public class ContactManagerImpl implements ContactManager {
 			}
 
 		@Override
-		public void flush() {
+		public void flush() throws IOException {
 		PrintWriter printwriter = null;
 			try{
-				deleteFile();
 				File file = new File(filename);
+				file.delete();
+				file.createNewFile();
 				printwriter = new PrintWriter(file);
-				printwriter.println(IDnumbers);
-				printwriter.println();
+				printwriter.println("IDnumbers:" + IDnumbers);
 				List<String> data = generateData();
 				for(int i = 0; i < data.size(); i++){
-					printwriter.println(data.get(i));
+					printwriter.write(data.get(i));
+					printwriter.println();
 				}
-			}catch(FileNotFoundException ex){
+			}catch(IOException ex){
 				ex.printStackTrace();
 			}finally{
 				if(printwriter != null){
@@ -516,8 +517,12 @@ public class ContactManagerImpl implements ContactManager {
 			Iterator<Contact> itr = Contacts.iterator();
 			String s;
 			while(itr.hasNext()){
-				s = "Name:" + itr.next().getName() + "," + "Contact Id:" +  itr.next().getId() + "," + "Notes:" +  itr.next().getNotes();
+				Contact c = itr.next();
+				s = "Name:" + c.getName() + "," + "Contact Id:" + c.getId() + "," + "Notes:" + c.getNotes();
 				data.add(s);
+				/*
+				s = "Name:" + itr.next().getName() + "," + "Contact Id:" +  itr.next().getId() + "," + "Notes:" +  itr.next().getNotes();
+				data.add(s);**/
 			}
 			for(int i = 0; i < FutureMeetings.size(); i++){
 				s = "Meeting Id:" + FutureMeetings.get(i).getID() + ",";
@@ -558,17 +563,26 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 		
-		public void Exit(){
-			flush();
-			System.exit(0);//need to check what to put in here.
+		public void Exit() throws IOException{
+			try{
+				flush();
+				System.exit(0);//need to check what to put in here.
+			}catch(IOException ex){
+				ex.printStackTrace();
+			}
 		}
 		
 		public static void main (String [] args){
 			ContactManagerImpl cm = new ContactManagerImpl("/Users/williamhogarth/Documents/workspace/Contact Manager/src/contacts.txt");
-			cm.launch();
+			try {
+				cm.launch();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
-		private void launch(){
+		private void launch() throws IOException{
 			
 			//contact numbers 1-6
 			addNewContact("Tom Wolfe", "Written nothing good for years");
@@ -578,17 +592,23 @@ public class ContactManagerImpl implements ContactManager {
 			addNewContact("Joseph Heller", "I'll catch you in Catch 22");
 			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");
 			
+			Iterator<Contact> itr = Contacts.iterator();
+			while(itr.hasNext()){
+				System.out.println(itr.next().getName());
+			}
+			
+			
 			System.out.println("Contacts added");
 			
 			Set<Contact> cont = new LinkedHashSet<Contact>();
 			cont = getContacts("Joseph Heller");
 			System.out.println("Checking for Heller");
-			Iterator<Contact> itr = cont.iterator();
+			Iterator<Contact> itr1 = cont.iterator();
 			do{
-				Contact c = itr.next();
+				Contact c = itr1.next();
 				System.out.println(c.getName());
 				System.out.println("Why no name?");
-			}while (itr.hasNext());
+			}while (itr1.hasNext());
 			System.out.println("Checked for Heller");
 			
 			cont = getContacts(1,2,4,8);
@@ -633,6 +653,8 @@ public class ContactManagerImpl implements ContactManager {
 			pm = getPastMeeting(11);
 			str = pm.getNotes();
 			System.out.println(str);
+		Exit();
+			
 		}
 	
 }
