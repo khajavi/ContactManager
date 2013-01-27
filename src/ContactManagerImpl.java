@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-//forgot about dealing with IDnumbers
+
 public class ContactManagerImpl implements ContactManager {
 		
 		private final String filename; 
@@ -22,34 +22,44 @@ public class ContactManagerImpl implements ContactManager {
 			this.Contacts = new LinkedHashSet<Contact>();
 			this.FutureMeetings = new ArrayList<Meeting>();
 			this.PastMeetings = new ArrayList<PastMeeting>();
-			File file = new File(filename);
-			try{
-				file.createNewFile();
-			}catch(IOException ex){
-			BufferedReader in = null;
-			try{
-				in = new BufferedReader(new FileReader(file));
-				String line;
-				while ((line = in.readLine()) != null){
-					if(line.startsWith("Contact")){
-						loadDataContact(line);
-					}else{
-						loadMeeting(line);
+			
+			public void loadFile(String filename){
+				
+				File file = new File(filename);
+				BufferedReader in = null;
+				try{
+					in = new BufferedReader(new FileReader(file));
+					String line;
+					while ((line = in.readLine()) != null){
+						if(line.startsWith("Name")){
+							loadDataContact(line);
+						}else if (line.startsWith("ID")){
+							Pattern num = Pattern.compile("[0-9]+");
+							Matcher m = num.matcher(line);
+							while(m.find()){
+								str = m.group();
+								System.out.println("printing " + str);
+								IDnumbers = Integer.parseInt(str);
+							}
+						}else{
+							System.out.println("about to load meeting:" + line);
+							loadMeeting(line);
+						}
+					}
+				}catch(FileNotFoundException ex1){
+					ex1.printStackTrace();
+				}catch(IOException ex1){
+					ex1.printStackTrace();
+				}finally{
+					try{
+						in.close();
+					}catch (IOException ex1){
+						ex1.printStackTrace();
 					}
 				}
-			}catch(FileNotFoundException ex1){
-				ex1.printStackTrace();
-			}catch(IOException ex1){
-				ex1.printStackTrace();
-			}finally{
-				try{
-					in.close();
-				}catch (IOException ex1){
-					ex1.printStackTrace();
-				}
-			}
+			
 		}
-		}
+		
 		//need to add try
 		public void loadDataContact(String data){
 			Pattern getName = Pattern.compile("Name:\\w[\\s[\\w]]*,");
@@ -62,7 +72,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			int id = 0;
 			m = getContactId.matcher(data);
-			Pattern findId = Pattern.compile("[0-9]*");
+			Pattern findId = Pattern.compile("[0-9]+");
 			String stringId = "";
 			while(m.find()){
 				stringId = m.group();
@@ -76,15 +86,15 @@ public class ContactManagerImpl implements ContactManager {
 			while(m.find()){
 				Notes = data.substring(m.end() + 1);
 			}
-			Contact c = new ContactImpl(name, Notes, id);
+			Contacts.add(new ContactImpl(name, Notes, id));
 		}
 		
 		public void loadMeeting(String data){
 			Pattern getMeetingId = Pattern.compile("Meeting Id:\\d*");
-			Pattern getDate = Pattern.compile("Date:[0-9]{4}/[0-9]{2}/[0-9]{2}");
+			Pattern getDate = Pattern.compile("(Date:([0-9]{4})/([0-9]{2})/([0-9]{2}))");
 			Pattern getContactIds = Pattern.compile("Contact Id:(([0-9]*,)*)");
 			Pattern getNotes = Pattern.compile("Notes:");
-			Pattern IdGetter = Pattern.compile("[0-9]*");
+			Pattern IdGetter = Pattern.compile("[0-9]+");
 			
 			int id = 0;
 			Matcher m = getMeetingId.matcher(data);
@@ -95,6 +105,7 @@ public class ContactManagerImpl implements ContactManager {
 			m = IdGetter.matcher(idHolder);
 			while(m.find()){
 				id = Integer.parseInt(m.group());
+				System.out.println(id);
 			}
 			m = getContactIds.matcher(data);
 			Set<Contact> contacts = new LinkedHashSet<Contact>();
@@ -115,10 +126,12 @@ public class ContactManagerImpl implements ContactManager {
 			m = getDate.matcher(data);
 			while(m.find()){
 				Date = m.group();
+				System.out.println(m.group());
 			}
+			System.out.println("Printing date:" + Date);
 			//will also need to add time functionality, but will add once working.
-			int year = Integer.parseInt(Date.substring(0,4));
-			Date = Date.substring(5);
+			int year = Integer.parseInt(Date.substring(5,9));
+			Date = Date.substring(10);
 			int month = Integer.parseInt(Date.substring(0,2));
 			Date = Date.substring(3);
 			int day = Integer.parseInt(Date.substring(0, 2));
@@ -583,20 +596,24 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		private void launch() throws IOException{
-			
+			/*
 			//contact numbers 1-6
 			addNewContact("Tom Wolfe", "Written nothing good for years");
 			addNewContact("Martin Amis", "Martin my dad is Kingsley Amis Amis");
 			addNewContact("Bret Easton Ellis", "There is some sick going on in my cranium");
 			addNewContact("Douglas Adams", "funniest writer dead");
 			addNewContact("Joseph Heller", "I'll catch you in Catch 22");
-			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");
-			
+			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");*/
+			/*
 			Iterator<Contact> itr = Contacts.iterator();
 			while(itr.hasNext()){
 				System.out.println(itr.next().getName());
 			}
 			
+			Iterator <PastMeeting> itr2 = PastMeetings.iterator();
+			while (itr2.hasNext()){
+				System.out.println(itr2.next().getID());
+			}
 			
 			System.out.println("Contacts added");
 			
@@ -604,11 +621,12 @@ public class ContactManagerImpl implements ContactManager {
 			cont = getContacts("Joseph Heller");
 			System.out.println("Checking for Heller");
 			Iterator<Contact> itr1 = cont.iterator();
-			do{
+			/*while (itr1.hasNext());{
 				Contact c = itr1.next();
 				System.out.println(c.getName());
 				System.out.println("Why no name?");
-			}while (itr1.hasNext());
+			}**/
+			/*
 			System.out.println("Checked for Heller");
 			
 			cont = getContacts(1,2,4,8);
@@ -653,8 +671,13 @@ public class ContactManagerImpl implements ContactManager {
 			pm = getPastMeeting(11);
 			str = pm.getNotes();
 			System.out.println(str);
-		Exit();
 			
+		//Exit();
+			System.out.println(IDnumbers);
+			*/
+			for(int i = 0; i < PastMeetings.size(); i++){
+				System.out.println(PastMeetings.get(i).getID());
+			}
 		}
 	
 }

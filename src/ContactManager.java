@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
@@ -139,6 +140,7 @@ public interface ContactManager {
 	 * Save all data to disk
 	 * 
 	 * This method must be executed when the program is closed or when the user requests it
+	 * @throws IOException 
 	 */
-	void flush();
+	void flush() throws IOException;
 }
