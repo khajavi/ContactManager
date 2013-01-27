@@ -59,6 +59,14 @@ public class ContactManagerImpl implements ContactManager {
 				}
 			
 		}
+			
+		public LinkedHashSet<Contact> getContacts(){
+			return Contacts;
+		}
+		
+		public void addNewContact(Contact c){
+			Contacts.add(c);
+		}
 		
 		//need to add try
 		public void loadDataContact(String data){
