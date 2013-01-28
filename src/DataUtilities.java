@@ -52,7 +52,7 @@ public interface DataUtilities {
 	 * 
 	 * @param String containing all of the meeting details
 	 */
-	Set<Contact> getAttendeeIds(String data);
+	Set<Contact> getAttendees(String data);
 	
 	/*
 	 * Returns the Date of the Meeting

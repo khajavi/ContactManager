@@ -21,6 +21,9 @@ public class DataUtilitiesImpl implements DataUtilities {
 	public DataUtilitiesImpl(String filename){
 		
 		this.filename = filename;
+		this.Contacts = new LinkedHashSet<Contact>();
+		this.FutureMeetings = new ArrayList<Meeting>();
+		this.PastMeetings = new ArrayList<PastMeeting>();
 	}
 	
 	public void readData(){
@@ -60,14 +63,20 @@ public class DataUtilitiesImpl implements DataUtilities {
 	
 	public String getContactName(String data){
 		
-		Pattern getName = Pattern.compile("Name:\\w[\\s[[w]]*,");
+		Pattern getName = Pattern.compile("Name:\\w[\\s\\w]*,");
+		Pattern findName = Pattern.compile("\\w[\\s\\w]*");
 		Matcher m = getName.matcher(data);
-		String name = "";
+		String temp = "";
 		while(m.find()){
-			name = m.group().substring(5);
+			temp = m.group().substring(5);
 		}
-		return name;
-	}
+		String name = "";
+		m = findName.matcher(temp);
+			while(m.find()){
+				name = m.group();
+			}
+			return name;
+		}
 	
 	public int getContactID(String data){
 		
@@ -92,7 +101,7 @@ public class DataUtilitiesImpl implements DataUtilities {
 		Pattern getNotes = Pattern.compile("Notes:");
 		Matcher m = getNotes.matcher(data);
 		while(m.find()){
-			notes = m.group().substring(6);
+			notes = data.substring(m.end());
 		}
 		return notes;
 	}
@@ -102,7 +111,7 @@ public class DataUtilitiesImpl implements DataUtilities {
 		String name = getContactName(data);
 		int id = getContactID(data);
 		String notes = getNotes(data);
-		Contacts.add(new ContactImpl(name, notes, id));	
+		Contacts.add(new ContactImpl(name, notes, id));
 	}
 	
 	public int getMeetingID(String data){
@@ -121,7 +130,7 @@ public class DataUtilitiesImpl implements DataUtilities {
 		return id;
 	}
 	
-	public LinkedHashSet<Contact> getAttendeeIds(String data){
+	public LinkedHashSet<Contact> getAttendees(String data){
 		
 		LinkedHashSet<Contact> Ids = new LinkedHashSet<Contact>();
 		Pattern ContactIds = Pattern.compile("Contact Id:(([0-9]*,)*)");
@@ -159,7 +168,7 @@ public class DataUtilitiesImpl implements DataUtilities {
 		int month = Integer.parseInt(date.substring(0,2));
 		date = date.substring(3);
 		int day = Integer.parseInt(date.substring(0, 2));
-		date = date.substring(3);
+		//date = date.substring(3);
 		Calendar meeting = new GregorianCalendar(year, month, day);
 		return (GregorianCalendar) meeting;
 	}
@@ -167,7 +176,7 @@ public class DataUtilitiesImpl implements DataUtilities {
 	public void loadMeeting(String data){
 		
 		int id = getMeetingID(data);
-		LinkedHashSet<Contact> Ids = getAttendeeIds(data);
+		LinkedHashSet<Contact> Ids = getAttendees(data);
 		GregorianCalendar meetingDate = getMeetingDate(data);
 		
 		Calendar now = new GregorianCalendar();
@@ -186,7 +195,7 @@ public class DataUtilitiesImpl implements DataUtilities {
 		int id = getMeetingID(data);
 		String notes = getNotes(data);
 		GregorianCalendar meetingDate = getMeetingDate(data);
-		LinkedHashSet<Contact> attendees = getAttendeeIds(data);
+		LinkedHashSet<Contact> attendees = getAttendees(data);
 		
 		PastMeeting pastMeeting = new PastMeetingImpl(meetingDate, attendees, notes, id);
 		PastMeetings.add(pastMeeting);
@@ -207,6 +216,5 @@ public class DataUtilitiesImpl implements DataUtilities {
 	public ArrayList<PastMeeting> getPastMeetings() {
 		return PastMeetings;
 	}
-
 	
 }

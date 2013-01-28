@@ -35,9 +35,7 @@ public class MeetingTest {
 
 	@Test
 	public void testGetDate() {
-		assertEquals(2150, m.getDate().get(Calendar.YEAR));
-		assertEquals(11, m.getDate().get(Calendar.MONTH));
-		assertEquals(25, m.getDate().get(Calendar.DATE));
+		assertEquals(date.getTime(), m.getDate().getTime());
 	}
 
 	@Test
