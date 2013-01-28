@@ -20,12 +20,12 @@ public class MeetingTest {
 	public void setUp(){
 		
 		date = new GregorianCalendar(2150,11,25);
-		Set<Contact> Attendees = new LinkedHashSet<Contact>();
+		Attendees = new LinkedHashSet<Contact>();
 		Contact c = new ContactImpl("Ed", "philosophy", 2);
 		Contact c2 = new ContactImpl("Ben", "architect", 3);
 		Attendees.add(c);
 		Attendees.add(c2);
-		Meeting m = new MeetingImpl(date, Attendees,Id);
+		m = new MeetingImpl(date, Attendees,Id);
 	}
 
 	@Test
@@ -52,7 +52,8 @@ public class MeetingTest {
 
 	@Test
 	public void testToString() {
-		String str = "Meeting Id:1,Date:2150/11/24,Contact Ids:2,3,";
+		String str = "Meeting Id:1,Date:2150/11/25,Contact Ids:2,3,";
+		System.out.println(m.toString());
 		assertEquals(str, m.toString());
 	}
 

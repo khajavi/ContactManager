@@ -40,6 +40,19 @@ public class ContactImpl implements Contact {
 		return str;
 	}
 	
+	@Override
+	public boolean equals(Object o){
+		if(o instanceof ContactImpl){
+			if(this.ID == ((ContactImpl) o).getId()){
+				return true;
+			}else{
+				return false;
+			}
+		}else{
+			return false;
+		}
+	}
+	
 	public int getId() {
 		return ID;
 	}

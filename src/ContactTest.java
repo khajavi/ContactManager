@@ -44,7 +44,7 @@ public class ContactTest {
 	
 	@Test
 	public void testToString(){
-		String str = "Name:Zaphoid Beeblebrox,ContactId:1,Notes:If there's anything around here more important than my ego, I want it caught and shot now!";
+		String str = "Name:Zaphoid Beeblebrox,Contact Id:1,Notes:If there's anything around here more important than my ego, I want it caught and shot now!";
 		assertEquals(str, c.toString());
 	}
 
