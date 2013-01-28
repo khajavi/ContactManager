@@ -18,147 +18,18 @@ public class ContactManagerImpl implements ContactManager {
 		
 		
 		public ContactManagerImpl(String filename){
+			
 			this.filename = filename;
 			this.Contacts = new LinkedHashSet<Contact>();
 			this.FutureMeetings = new ArrayList<Meeting>();
 			this.PastMeetings = new ArrayList<PastMeeting>();
 			
-			public void loadFile(String filename){
-				
-				File file = new File(filename);
-				BufferedReader in = null;
-				try{
-					in = new BufferedReader(new FileReader(file));
-					String line;
-					while ((line = in.readLine()) != null){
-						if(line.startsWith("Name")){
-							loadDataContact(line);
-						}else if (line.startsWith("ID")){
-							Pattern num = Pattern.compile("[0-9]+");
-							Matcher m = num.matcher(line);
-							while(m.find()){
-								str = m.group();
-								System.out.println("printing " + str);
-								IDnumbers = Integer.parseInt(str);
-							}
-						}else{
-							System.out.println("about to load meeting:" + line);
-							loadMeeting(line);
-						}
-					}
-				}catch(FileNotFoundException ex1){
-					ex1.printStackTrace();
-				}catch(IOException ex1){
-					ex1.printStackTrace();
-				}finally{
-					try{
-						in.close();
-					}catch (IOException ex1){
-						ex1.printStackTrace();
-					}
-				}
-			
-		}
-			
-		public LinkedHashSet<Contact> getContacts(){
-			return Contacts;
-		}
-		
-		public void addNewContact(Contact c){
-			Contacts.add(c);
-		}
-		
-		//need to add try
-		public void loadDataContact(String data){
-			Pattern getName = Pattern.compile("Name:\\w[\\s[\\w]]*,");
-			Pattern getContactId = Pattern.compile("Contact Id:\\d*");
-			Pattern getNotes = Pattern.compile("Notes:"); 
-			String name = "";
-			Matcher m = getName.matcher(data);
-			while(m.find()){
-				name = m.group().substring(5);
-			}
-			int id = 0;
-			m = getContactId.matcher(data);
-			Pattern findId = Pattern.compile("[0-9]+");
-			String stringId = "";
-			while(m.find()){
-				stringId = m.group();
-			}
-			m = findId.matcher(stringId);
-			while(m.find()){
-				id = Integer.parseInt(m.group());
-			}
-			m = getNotes.matcher(data);
-			String Notes = "";
-			while(m.find()){
-				Notes = data.substring(m.end() + 1);
-			}
-			Contacts.add(new ContactImpl(name, Notes, id));
-		}
-		
-		public void loadMeeting(String data){
-			Pattern getMeetingId = Pattern.compile("Meeting Id:\\d*");
-			Pattern getDate = Pattern.compile("(Date:([0-9]{4})/([0-9]{2})/([0-9]{2}))");
-			Pattern getContactIds = Pattern.compile("Contact Id:(([0-9]*,)*)");
-			Pattern getNotes = Pattern.compile("Notes:");
-			Pattern IdGetter = Pattern.compile("[0-9]+");
-			
-			int id = 0;
-			Matcher m = getMeetingId.matcher(data);
-			String idHolder = "";
-			while(m.find()){
-				idHolder = m.group();
-			}
-			m = IdGetter.matcher(idHolder);
-			while(m.find()){
-				id = Integer.parseInt(m.group());
-				System.out.println(id);
-			}
-			m = getContactIds.matcher(data);
-			Set<Contact> contacts = new LinkedHashSet<Contact>();
-			while(m.find()){
-				idHolder = m.group();
-			}
-			m = IdGetter.matcher(idHolder);
-			while(m.find()){
-				int temp = Integer.parseInt(m.group());
-				Iterator<Contact> itr = Contacts.iterator();
-				while(itr.hasNext()){
-					if(temp == itr.next().getId()){
-						contacts.add(itr.next());
-					}
-				}
-			}
-			String Date = "";
-			m = getDate.matcher(data);
-			while(m.find()){
-				Date = m.group();
-				System.out.println(m.group());
-			}
-			System.out.println("Printing date:" + Date);
-			//will also need to add time functionality, but will add once working.
-			int year = Integer.parseInt(Date.substring(5,9));
-			Date = Date.substring(10);
-			int month = Integer.parseInt(Date.substring(0,2));
-			Date = Date.substring(3);
-			int day = Integer.parseInt(Date.substring(0, 2));
-			Date = Date.substring(3);
-			Calendar meeting = new GregorianCalendar(year, month, day);
-			Calendar now = new GregorianCalendar();
-			if(meeting.after(now)){
-				FutureMeeting futureMeeting = new FutureMeetingImpl(contacts, meeting, id);
-				FutureMeetings.add(futureMeeting);
-			}else{
-				String notes = "";
-				m = getNotes.matcher(data);
-				while(m.find()){
-					notes = data.substring(m.end() + 1);
-				}
-				PastMeeting pastMeeting = new PastMeetingImpl(meeting, contacts, notes, id);
-				PastMeetings.add(pastMeeting);
-			}
-
+			//make readData a boolean and add if true, don't if false.
+			DataUtilities d = new DataUtilitiesImpl(filename);
+			d.readData();
+			this.Contacts = d.getContacts();
+			this.FutureMeetings = d.getFutureMeetings();
+			this.PastMeetings = d.getPastMeetings();
 		}
 		
 		/**
@@ -535,36 +406,32 @@ public class ContactManagerImpl implements ContactManager {
 		public List<String> generateData(){
 			
 			List<String> data = new ArrayList<String>();
-			Iterator<Contact> itr = Contacts.iterator();
-			String s;
-			while(itr.hasNext()){
-				Contact c = itr.next();
-				s = "Name:" + c.getName() + "," + "Contact Id:" + c.getId() + "," + "Notes:" + c.getNotes();
-				data.add(s);
-				/*
-				s = "Name:" + itr.next().getName() + "," + "Contact Id:" +  itr.next().getId() + "," + "Notes:" +  itr.next().getNotes();
-				data.add(s);**/
+			String str;
+			
+			for(Contact c: Contacts){
+				str = "Name:" + c.getName() + "," + "Contact Id:" + c.getId() + "," + "Notes:" + c.getNotes();
+				data.add(str);
 			}
-			for(int i = 0; i < FutureMeetings.size(); i++){
-				s = "Meeting Id:" + FutureMeetings.get(i).getID() + ",";
-				s = s + "Date:" +  FutureMeetings.get(i).getDate().get(Calendar.YEAR) + "/" + FutureMeetings.get(i).getDate().get(Calendar.MONTH) + "/" + FutureMeetings.get(i).getDate().get(Calendar.DATE) +  ",";
-				s = s + "Contact Ids"; 
-				itr = FutureMeetings.get(i).getContacts().iterator();
-				while(itr.hasNext()){
-					s = s + itr.next().getId() + ",";
+			
+			for(Meeting m: FutureMeetings){
+				str = "Meeting Id:" + m.getID() + ",";
+				str = str + "Date:" + m.getDate().get(Calendar.YEAR) + "/" + m.getDate().get(Calendar.MONTH) + "/" + m.getDate().get(Calendar.DATE) + ",";
+				str = str + "Contact Ids:";
+				for(Contact c: m.getContacts()){
+					str = str + c.getId() + ",";
 				}
-				data.add(s);
+				data.add(str);
 			}
-			for(int i = 0; i < PastMeetings.size(); i++){
-				s = "PastMeeting Id:" + PastMeetings.get(i).getID() + ",";
-				s = s + "Date:" + PastMeetings.get(i).getDate().get(Calendar.YEAR) + "/" + PastMeetings.get(i).getDate().get(Calendar.MONTH) + "/" + PastMeetings.get(i).getDate().get(Calendar.DATE) +  ",";
-				itr = PastMeetings.get(i).getContacts().iterator();
-				s = s + "Contact Ids:";
-				while(itr.hasNext()){
-					s = s + itr.next().getId() + ",";
+			
+			for(PastMeeting p: PastMeetings){
+				str = "PastMeeting Id:" + p.getID() + ",";
+				str = str + "Date:" + p.getDate().get(Calendar.YEAR) + "/" + p.getDate().get(Calendar.MONTH) + "/" + p.getDate().get(Calendar.DATE) + ",";
+				str = str + "Contact Ids:";
+				for(Contact c: p.getContacts()){
+					str = str + c.getId() + ",";
 				}
-				s = s + "Notes:" + PastMeetings.get(i).getNotes();
-				data.add(s);
+				str = str + "Notes:" + p.getNotes();
+				data.add(str);
 			}
 			return data;
 		}
