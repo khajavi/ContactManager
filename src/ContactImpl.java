@@ -31,6 +31,15 @@ public class ContactImpl implements Contact {
 		this.Notes = "";
 	}
 	
+	@Override
+	public String toString(){
+		
+		String str = "Name:" + Name + ",";
+		str = str + "Contact Id:" + ID + ",";
+		str = str + "Notes:" + Notes;
+		return str;
+	}
+	
 	public int getId() {
 		return ID;
 	}

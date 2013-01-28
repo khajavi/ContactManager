@@ -24,21 +24,14 @@ public class ContactManagerImpl implements ContactManager {
 			this.FutureMeetings = new ArrayList<Meeting>();
 			this.PastMeetings = new ArrayList<PastMeeting>();
 			
-			//make readData a boolean and add if true, don't if false.
-			DataUtilities d = new DataUtilitiesImpl(filename);
+			DataUtilitiesImpl d = new DataUtilitiesImpl(filename);
 			d.readData();
+			
 			this.Contacts = d.getContacts();
 			this.FutureMeetings = d.getFutureMeetings();
 			this.PastMeetings = d.getPastMeetings();
 		}
-		
-		/**
-		 * The methods checks whether or not the meeting is scheduled for the future.
-		 * If the date is in the past an IlegalArgumentException is thrown. Returns 0 in this case.
-		 * 
-		 * If scheduled for the present time or later a new FutureMeeting is created
-	.	 * and added to the List if future Meetings. The meeting id is returned.
-		 */
+
 		public int addFutureMeeting(Set<Contact> attendees, Calendar date){
 			try{
 					Calendar Date = Calendar.getInstance();
@@ -54,15 +47,7 @@ public class ContactManagerImpl implements ContactManager {
 				return 0;
 			}
 		}
-		
-		/**
-		 * The method checks whether or not a meeting with this ID has been scheduled for the future,
-		 * by iterating through the list of FutureMeetings. If scheduled for the future an 
-		 * IllegalArgumentException is thrown. If no meeting is scheduled in the future with this id
-		 * the method iterates through the list of PastMettings checking whether or not a meeting with
-		 * this id exists. If found the PastMeeting with this id is returned, else null is returned.
-		 */
-		
+
 		public PastMeeting getPastMeeting(int id){
 			try{
 				for(int i = 0; i < FutureMeetings.size(); i++){
@@ -83,15 +68,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 		
-		/**
-		 * The method checks whether a meeting with this id has been scheduled in the past by iterating
-		 * through PastMeetings checking each Id. If a match is found the IllegalArgumentException is thrown
-		 * and null is returned.
-		 * 
-		 * The method then iterates through FutureMeetings checking each Id, if a match is found that
-		 * that meeting is returned, else null is returned.
-		 * 
-		 */
+
 		public FutureMeeting getFutureMeeting(int id){
 			try{
 				for (int i = 0; i < PastMeetings.size(); i++){
@@ -114,10 +91,6 @@ public class ContactManagerImpl implements ContactManager {
 			
 		}
 		
-		/**
-		 * Checks FutureMeetings and PastMeetings for the meeting with the ID. Upcasts
-		 * a PastMeeting to meeting.
-		 */
 		public Meeting getMeeting(int id){
 			for(int i = 0; i < FutureMeetings.size(); i++){
 				if(FutureMeetings.get(i).getID() == id){
@@ -170,12 +143,6 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 		
-		/**
-		 * This method sorts the list of meetings being held with the contact by calling the 
-		 * quickSort method. A lack of duplicates is ensured by using a set prior to sorting
-		 * the list.
-		 */
-		
 		public List<Meeting> getFutureMeetingList(Contact contact){
 			try{
 				if(!Contacts.contains(contact)){
@@ -197,12 +164,7 @@ public class ContactManagerImpl implements ContactManager {
 				return null;
 			}
 		}
-		
-		/**
-		 * This method sorts the list of meetings being held on a certain day by calling
-		 * the quickSort method. A lack of duplicates is ensured by using a set prior to sorting
-		 * the list.
-		 */
+
 		public List<Meeting> getFutureMeetingList(Calendar date){
 			try{
 				Calendar Date = Calendar.getInstance();
@@ -224,13 +186,6 @@ public class ContactManagerImpl implements ContactManager {
 				return null;
 			}
 			}
-		
-		/**
-		 * This method retrieves all of the meetings previously held with a contact, by first checking
-		 * whether or not the contact exists. The method then iterates through PastMeetings
-		 * adding each meeting held with the contact to the set. These are added to a list that is sorted
-		 * using the quicksort method. The meetings are downcast to pastMeetings and the list is returned.
-		 */
 		
 		public List<PastMeeting> getPastMeetingList(Contact contact){
 			try{
@@ -260,10 +215,6 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 		
-		/**
-		 * Creates a new past meeting.
-		 */
-		
 		public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text){
 			try{
 				if(contacts.isEmpty() || !Contacts.containsAll(contacts)){
@@ -285,10 +236,7 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 		
-		/**
-		 * 
-		 * 
-		 */
+
 		//need to account for circumstance when just adding notes
 		public void addMeetingNotes(int id, String text){
 			try {
@@ -317,10 +265,6 @@ public class ContactManagerImpl implements ContactManager {
 			}
 		}
 		
-		/**
-		 * 
-		 */
-		
 		public void addNewContact(String name, String notes){
 			try{
 				Contact c = new ContactImpl(name, notes);
@@ -329,11 +273,6 @@ public class ContactManagerImpl implements ContactManager {
 				ex.printStackTrace();
 			}
 		}
-		
-		/**
-		 * Could improve method by parsing the array of ids to a set in case there are duplicate
-		 * ids. 
-		 */
 		
 		public Set<Contact> getContacts(int... id){
 			try{
@@ -375,7 +314,6 @@ public class ContactManagerImpl implements ContactManager {
 				}
 			}
 
-		@Override
 		public void flush() throws IOException {
 		PrintWriter printwriter = null;
 			try{
@@ -399,39 +337,24 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		/**
-		 * Converts the contacts and meetings held by the Contact Manager into a String format so
-		 * that they can be written to the file created by the Flush method.
+		 * Parses contacts, meetings and past meetings to strings and then adds them to a list of strings
+		 * so that they can be written to file by the flush method.
 		 */
-		//Change so add type, id, attendees, notes
+		
 		public List<String> generateData(){
 			
 			List<String> data = new ArrayList<String>();
-			String str;
 			
 			for(Contact c: Contacts){
-				str = "Name:" + c.getName() + "," + "Contact Id:" + c.getId() + "," + "Notes:" + c.getNotes();
-				data.add(str);
+				data.add(c.toString());
 			}
 			
 			for(Meeting m: FutureMeetings){
-				str = "Meeting Id:" + m.getID() + ",";
-				str = str + "Date:" + m.getDate().get(Calendar.YEAR) + "/" + m.getDate().get(Calendar.MONTH) + "/" + m.getDate().get(Calendar.DATE) + ",";
-				str = str + "Contact Ids:";
-				for(Contact c: m.getContacts()){
-					str = str + c.getId() + ",";
-				}
-				data.add(str);
+				data.add(m.toString());
 			}
 			
 			for(PastMeeting p: PastMeetings){
-				str = "PastMeeting Id:" + p.getID() + ",";
-				str = str + "Date:" + p.getDate().get(Calendar.YEAR) + "/" + p.getDate().get(Calendar.MONTH) + "/" + p.getDate().get(Calendar.DATE) + ",";
-				str = str + "Contact Ids:";
-				for(Contact c: p.getContacts()){
-					str = str + c.getId() + ",";
-				}
-				str = str + "Notes:" + p.getNotes();
-				data.add(str);
+				data.add(p.toString());
 			}
 			return data;
 		}
@@ -465,7 +388,6 @@ public class ContactManagerImpl implements ContactManager {
 			try {
 				cm.launch();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -550,9 +472,9 @@ public class ContactManagerImpl implements ContactManager {
 		//Exit();
 			System.out.println(IDnumbers);
 			*/
-			for(int i = 0; i < PastMeetings.size(); i++){
+			/*for(int i = 0; i < PastMeetings.size(); i++){
 				System.out.println(PastMeetings.get(i).getID());
-			}
+			}**/
 		}
 	
 }

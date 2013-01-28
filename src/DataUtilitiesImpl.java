@@ -192,5 +192,21 @@ public class DataUtilitiesImpl implements DataUtilities {
 		PastMeetings.add(pastMeeting);
 	}
 
+	public String getFilename() {
+		return filename;
+	}
+
+	public LinkedHashSet<Contact> getContacts() {
+		return Contacts;
+	}
+
+	public ArrayList<Meeting> getFutureMeetings() {
+		return FutureMeetings;
+	}
+
+	public ArrayList<PastMeeting> getPastMeetings() {
+		return PastMeetings;
+	}
+
 	
 }

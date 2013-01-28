@@ -25,4 +25,13 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
 	public String getNotes(){
 		return Notes;
 	}
+	
+	@Override
+	public String toString(){
+		
+		String str = super.toString();
+		String str2 = "Past" + str;
+		str2 = str2 + "Notes:" + Notes;
+		return str2;
+	}
 }

@@ -32,4 +32,15 @@ public class MeetingImpl implements Meeting {
 	public Set<Contact> getContacts() {
 		return Attendees;
 	}
+	
+	@Override
+	public String toString(){
+		
+		String str = "Meeting Id:" + ID + ",";
+		str = str + Date.get(Calendar.YEAR) + "/" + Date.get(Calendar.MONTH) + "/" + Date.get(Calendar.DATE) + ",";
+		for(Contact c: Attendees){
+			str = str + c.getId() + ",";
+		}
+		return str;
+	}
 }
