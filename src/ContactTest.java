@@ -41,5 +41,11 @@ public class ContactTest {
 		c2.addNotes(notes);
 		assertEquals(notes, c2.getNotes());
 	}
+	
+	@Test
+	public void testToString(){
+		String str = "Name:Zaphoid Beeblebrox,ContactId:1,Notes:If there's anything around here more important than my ego, I want it caught and shot now!";
+		assertEquals(str, c.toString());
+	}
 
 }
