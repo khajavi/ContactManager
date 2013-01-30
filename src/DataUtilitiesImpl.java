@@ -157,18 +157,27 @@ public class DataUtilitiesImpl implements DataUtilities {
 	
 	public GregorianCalendar getMeetingDate(String data){
 		
-		Pattern getDate = Pattern.compile("(Date:([0-9]{4})/([0-9]{2})/([0-9]{2}))");
+		Pattern getDate = Pattern.compile("Date:([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})");
+		Pattern getMonth = Pattern.compile("/[0-9]{1,2}/");
+		Pattern getDay = Pattern.compile("Date:([0-9]{4})/([0-9]{1,2})/");
 		Matcher m = getDate.matcher(data);
 		String date = "";
 		while(m.find()){
 			date = m.group();
 		}
 		int year = Integer.parseInt(date.substring(5,9));
-		date = date.substring(10);
-		int month = Integer.parseInt(date.substring(0,2));
-		date = date.substring(3);
-		int day = Integer.parseInt(date.substring(0, 2));
-		//date = date.substring(3);
+		m = getMonth.matcher(date);
+		String temp = "";
+		while(m.find()){
+			temp = m.group();
+		}
+		int month = Integer.parseInt(temp.substring(1, temp.length() - 1));
+		m = getDay.matcher(date);
+		int day = 0;
+		while(m.find()){
+			day = m.end();
+		}
+		day = Integer.parseInt(date.substring(day));
 		Calendar meeting = new GregorianCalendar(year, month, day);
 		return (GregorianCalendar) meeting;
 	}
@@ -194,6 +203,7 @@ public class DataUtilitiesImpl implements DataUtilities {
 		
 		int id = getMeetingID(data);
 		String notes = getNotes(data);
+		System.out.println(data);
 		GregorianCalendar meetingDate = getMeetingDate(data);
 		LinkedHashSet<Contact> attendees = getAttendees(data);
 		
