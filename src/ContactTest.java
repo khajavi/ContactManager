@@ -1,5 +1,8 @@
 import static org.junit.Assert.*;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,6 +49,13 @@ public class ContactTest {
 	public void testToString(){
 		String str = "Name:Zaphoid Beeblebrox,Contact Id:1,Notes:If there's anything around here more important than my ego, I want it caught and shot now!";
 		assertEquals(str, c.toString());
+	}
+	
+	@Test
+	public void testEquals(){
+		Set<Contact> contact = new LinkedHashSet<Contact>();
+		contact.add(c);
+		assertTrue(contact.contains(c));
 	}
 
 }

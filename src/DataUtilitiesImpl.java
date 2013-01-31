@@ -53,14 +53,16 @@ public class DataUtilitiesImpl implements DataUtilities {
 		}catch(IOException ex){
 			ex.printStackTrace();
 		}finally{
-			try{
+			if(in != null){
+				try{
 				in.close();
-			}catch(IOException ex){
-				ex.printStackTrace();
+				}catch (IOException ex){
+					ex.printStackTrace();
+				}
 			}
 		}
 	}
-	
+		
 	public String getContactName(String data){
 		
 		Pattern getName = Pattern.compile("Name:\\w[\\s\\w]*,");
@@ -203,7 +205,6 @@ public class DataUtilitiesImpl implements DataUtilities {
 		
 		int id = getMeetingID(data);
 		String notes = getNotes(data);
-		System.out.println(data);
 		GregorianCalendar meetingDate = getMeetingDate(data);
 		LinkedHashSet<Contact> attendees = getAttendees(data);
 		

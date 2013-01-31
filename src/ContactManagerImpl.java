@@ -3,10 +3,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ContactManagerImpl implements ContactManager {
 		
@@ -17,7 +13,7 @@ public class ContactManagerImpl implements ContactManager {
 		private ArrayList<PastMeeting> PastMeetings;
 		
 		
-		public ContactManagerImpl(String filename){
+		public ContactManagerImpl(String filename) {
 			
 			this.filename = filename;
 			this.Contacts = new LinkedHashSet<Contact>();
@@ -33,18 +29,16 @@ public class ContactManagerImpl implements ContactManager {
 		}
 
 		public int addFutureMeeting(Set<Contact> attendees, Calendar date){
-			try{
-					Calendar Date = Calendar.getInstance();
-					if(date.before(Date)){
-						throw new IllegalArgumentException();
-					}
-					Meeting m = new FutureMeetingImpl(attendees, date);
-					FutureMeetings.add(m);
-					return m.getID();
-			} catch (IllegalArgumentException ex){
-				ex.printStackTrace();
-				System.out.println("That meeting is shceduled for the future");
-				return 0;
+			
+			GregorianCalendar Date = new GregorianCalendar();
+			if(date.before(Date)){
+				throw new IllegalArgumentException();
+			}else if (attendees == null){
+				throw new NullPointerException();
+			}else{
+			Meeting m = new FutureMeetingImpl(attendees, date);
+			FutureMeetings.add(m);
+			return m.getID();
 			}
 		}
 
@@ -393,88 +387,50 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		private void launch() throws IOException{
-			/*
-			//contact numbers 1-6
+		
 			addNewContact("Tom Wolfe", "Written nothing good for years");
 			addNewContact("Martin Amis", "Martin my dad is Kingsley Amis Amis");
 			addNewContact("Bret Easton Ellis", "There is some sick going on in my cranium");
 			addNewContact("Douglas Adams", "funniest writer dead");
 			addNewContact("Joseph Heller", "I'll catch you in Catch 22");
-			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");*/
-			/*
-			Iterator<Contact> itr = Contacts.iterator();
-			while(itr.hasNext()){
-				System.out.println(itr.next().getName());
-			}
-			
-			Iterator <PastMeeting> itr2 = PastMeetings.iterator();
-			while (itr2.hasNext()){
-				System.out.println(itr2.next().getID());
-			}
-			
-			System.out.println("Contacts added");
+			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");
+			addNewContact("Kingsley Amis", "Lucky Jim");
 			
 			Set<Contact> cont = new LinkedHashSet<Contact>();
-			cont = getContacts("Joseph Heller");
-			System.out.println("Checking for Heller");
-			Iterator<Contact> itr1 = cont.iterator();
-			/*while (itr1.hasNext());{
-				Contact c = itr1.next();
-				System.out.println(c.getName());
-				System.out.println("Why no name?");
-			}**/
-			/*
-			System.out.println("Checked for Heller");
 			
-			cont = getContacts(1,2,4,8);
-			System.out.println("Was supposed to throw illegArgsException");
+			cont = getContacts(1,2,3);
+			Calendar date = new GregorianCalendar(2011, 10, 8);
 			
-			cont = getContacts(1,2,4);
-			System.out.println("Was not supposed to throw one");
-			Calendar date = new GregorianCalendar(2013, 7, 8);
-			System.out.println(date.get(Calendar.YEAR));
-			int i = addFutureMeeting(cont, date);
-			System.out.println(i);//i should equal 7
-			FutureMeeting m = getFutureMeeting(7);
-			m = getFutureMeeting(8);
-			//System.out.println(m.getDate().toString());
-			Calendar date2 = new GregorianCalendar(2013, 6, 5);
-			cont = getContacts(6,5,4);
-			System.out.println("Was not supposed to throw one");
 			
-			i = addFutureMeeting(cont, date2);
-			System.out.println(i); //i should equal 8
+			addNewPastMeeting(cont, date, "Fun meeting");
 			
-			Calendar pastm = new GregorianCalendar(2012, 6, 5);
-			addNewPastMeeting(cont, pastm, "I see dead people");//meeting id should equal 9
-			System.out.println("checkpoint 1");
+			date = new GregorianCalendar(1988,8,8);
 			cont = getContacts(4,5);
-			addNewPastMeeting(cont, pastm, "Hitchhiker's or Catch 22?");//meeting id should be 10
-			System.out.println("Checkpoint 2");
+			addNewPastMeeting(cont, date, "Hilarious dudes");
+
+			cont = getContacts(6,7);
+			date = new GregorianCalendar();
 			
-			PastMeeting pm = getPastMeeting(9);
-			String str = pm.getNotes();
-			System.out.println(str);
-			System.out.println("Checkpoint 3");
+			addFutureMeeting(cont, date);
 			
-			pm = getPastMeeting(10);
-			str = pm.getNotes();
-			System.out.println(str);
+			cont = getContacts(4,5,7);
+			date = new GregorianCalendar(2013, 8, 8);
+			addFutureMeeting(cont, date);
 			
-			Calendar d = new GregorianCalendar();
-			addFutureMeeting(cont, d);//id should be 11
+			Exit();
 			
-			addMeetingNotes(11,"Discussions ongoing");
-			pm = getPastMeeting(11);
-			str = pm.getNotes();
-			System.out.println(str);
-			
-		//Exit();
-			System.out.println(IDnumbers);
-			*/
-			/*for(int i = 0; i < PastMeetings.size(); i++){
-				System.out.println(PastMeetings.get(i).getID());
-			}**/
+		}
+
+		public LinkedHashSet<Contact> getContacts() {
+			return Contacts;
+		}
+
+		public ArrayList<Meeting> getFutureMeetings() {
+			return FutureMeetings;
+		}
+
+		public ArrayList<PastMeeting> getPastMeetings() {
+			return PastMeetings;
 		}
 	
 }

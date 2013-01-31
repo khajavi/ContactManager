@@ -1,104 +1,354 @@
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 
 public class ContactManagerTest {
 	
-	private ContactManager c;
-	private String filename = 
+	private ContactManager cm;
+	private String filename = "/Users/williamhogarth/Documents/workspace/Contact Manager/src/contactManagerTest.txt";
 	
 	@Before
 	public void setUp(){
 		
-		c = new ContactManagerImpl(filename);
+		cm = new ContactManagerImpl(filename);
+		
+		//add Future Meetings. This is not read from the file so that the test file
+		//will not need updating.
+		
+		GregorianCalendar date = getFutureDate();
+		date.roll(Calendar.MONTH, true);
+		//meeting is to a year and a month in the future.
+		LinkedHashSet<Contact> attendees = (LinkedHashSet<Contact>) cm.getContacts(4,3);
+		cm.addFutureMeeting(attendees, date);
 		
 	}
-
-	@Test
-	public void testContactManagerImpl() {
-		fail("Not yet implemented");
+	
+	@After
+	public void tearDown(){
+		
+		cm = null; 
 	}
-
+	
+	public GregorianCalendar getFutureDate(){
+		
+		GregorianCalendar date = new GregorianCalendar();
+		date.roll(Calendar.YEAR, true);
+		return date;
+	}
+	
+	public GregorianCalendar getPastDate(){
+		
+		GregorianCalendar date = new GregorianCalendar();
+		date.roll(Calendar.YEAR, false);
+		return date;
+	}
+	
 	@Test
 	public void testAddFutureMeeting() {
-		fail("Not yet implemented");
+		
+		int expected = ContactManagerImpl.IDnumbers + 1;
+		GregorianCalendar date = getFutureDate();
+		LinkedHashSet<Contact> attendees = (LinkedHashSet<Contact>) cm.getContacts(4,3);
+		assertEquals(expected, cm.addFutureMeeting(attendees, date));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddFutureMeetingExeptionPastDate(){
+		
+		GregorianCalendar date = getPastDate();
+		System.out.println(date.getTime());
+		LinkedHashSet<Contact> attendees = (LinkedHashSet<Contact>) cm.getContacts(1,2);
+		cm.addFutureMeeting(attendees, date);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddFutureMeetingNullContact(){
+		
+		GregorianCalendar date = getFutureDate();
+		Contact c = null;
+		Set<Contact> cont = new LinkedHashSet<Contact>();
+		cont.add(c);
+		cm.addFutureMeeting(cont, date);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetPastMeetingFutureId() {
+		
+		cm.getPastMeeting(11);
 	}
 
 	@Test
-	public void testGetPastMeeting() {
-		fail("Not yet implemented");
+	public void testGetPastMeeting(){
+		
+		PastMeeting meeting = cm.getPastMeeting(8);
+		assertEquals(8, meeting.getID());
 	}
-
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testGetFutureMeetingPastId(){
+		
+		cm.getFutureMeeting(8);
+	}
+	
 	@Test
 	public void testGetFutureMeeting() {
-		fail("Not yet implemented");
+		
+		Meeting m = cm.getFutureMeeting(10);
+		assertEquals(10, m.getID());
 	}
 
 	@Test
-	public void testGetMeeting() {
-		fail("Not yet implemented");
+	public void testGetMeetingNull() {
+		
+		Meeting m = cm.getMeeting(20);
+		assertNull(m);
 	}
 
+	@Test
+	public void testGetMeetingPastMeeting(){
+		
+		Meeting m = cm.getMeeting(8);
+		assertEquals(8, m.getID());
+	}
+	
+	@Test
+	public void testGetMeetingFutureMeeting(){
+		
+		Meeting m = cm.getMeeting(10);
+		assertEquals(10, m.getID());
+	}
+	
 	@Test
 	public void testQuickSort() {
-		fail("Not yet implemented");
+		
+		List<Meeting> testList = new ArrayList<Meeting>();
+		for(Meeting meeting: ((ContactManagerImpl) cm).getFutureMeetings()){
+			testList.add(meeting);
+		}
+		for(PastMeeting meeting:((ContactManagerImpl) cm).getPastMeetings()){
+			testList.add((Meeting)meeting);
+		}
+		testList = ((ContactManagerImpl) cm).quickSort(testList);
+		for(int i = 0; i < testList.size() - 1; i++){
+		assertTrue(testList.get(i).getDate().getTime().before(testList.get(i + 1).getDate().getTime()));
+		}
 	}
 
-	@Test
+	@Test //Not sure what's going on.
 	public void testGetFutureMeetingListContact() {
-		fail("Not yet implemented");
+		
+		Set<Contact> cont = cm.getContacts(4);
+		Contact[] contact = cont.toArray(new Contact[1]); 
+		cm.getFutureMeetingList(contact[0]);
 	}
 
 	@Test
 	public void testGetFutureMeetingListCalendar() {
-		fail("Not yet implemented");
+		
+		GregorianCalendar date = getFutureDate();
+		date.roll(Calendar.MONTH, true);
+		List<Meeting> meetingList = cm.getFutureMeetingList(date);
+		assertTrue(meetingList.size() == 1);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetFutureMeetingListPastDate(){
+		
+		GregorianCalendar date = getPastDate();
+		cm.getFutureMeetingList(date);
 	}
 
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetPastMeetingListFakeContact(){
+		
+		Contact c = new ContactImpl("Asimov", "Robotic Laws");
+		cm.getPastMeetingList(c);
+	}
+	
 	@Test
 	public void testGetPastMeetingList() {
-		fail("Not yet implemented");
+		
+		Set<Contact> cont = cm.getContacts(3);
+		Contact[] contact = cont.toArray(new Contact[1]);
+		Contact c = contact[0];
+		List<PastMeeting> pmList = cm.getPastMeetingList(c);
+		assertTrue(pmList.get(0).getID() == 8);
 	}
 
 	@Test
 	public void testAddNewPastMeeting() {
-		fail("Not yet implemented");
+		
+		GregorianCalendar date = getPastDate();
+		Set<Contact> contact = cm.getContacts(1,2,3);
+		String notes = "some notes";
+		cm.addNewPastMeeting(contact, date, notes);
 	}
-
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testAddNewPastMeetingEmptyContacts(){
+		
+		GregorianCalendar date = getPastDate();
+		Set<Contact> contact = new LinkedHashSet<Contact>();
+		String notes = "some notes";
+		cm.addNewPastMeeting(contact, date, notes);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testAddNewPastMeetingNonExistentContact(){
+		
+		GregorianCalendar date = getPastDate();
+		Set<Contact> contact = new LinkedHashSet<Contact>();
+		contact.add(new ContactImpl("name", "notes"));
+		String notes = "some notes";
+		cm.addNewPastMeeting(contact, date, notes);
+		
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testAddNewPastMeetingNullContacts(){
+		
+		GregorianCalendar date = getPastDate();
+		Set<Contact> contact = null;
+		String notes = "some notes";
+		cm.addNewPastMeeting(contact, date, notes);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testAddNewPastMeetingNullDate(){
+		
+		GregorianCalendar date = null;
+		Set<Contact> contact = cm.getContacts(1,2,3);
+		String notes = "some notes";
+		cm.addNewPastMeeting(contact, date, notes);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testAddNewPastMeetingNullNotes(){
+		
+		GregorianCalendar date = getPastDate();
+		Set<Contact> contact = cm.getContacts(1,2,3);
+		String notes = null;
+		cm.addNewPastMeeting(contact, date, notes);
+	}
+	
 	@Test
 	public void testAddMeetingNotes() {
-		fail("Not yet implemented");
+		
+		GregorianCalendar date = new GregorianCalendar();
+		String notes = "some notes";
+		Set<Contact> contact = cm.getContacts(1,2,3);
+		cm.addFutureMeeting(contact, date);
+		cm.addMeetingNotes(11, notes);
+		assertTrue(((ContactManagerImpl)cm).getPastMeetings().size() == 3);
+		assertEquals(notes, cm.getPastMeeting(11).getNotes());
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testAddMeetingNotesNoMeeting(){
+		
+		cm.addMeetingNotes(ContactManagerImpl.IDnumbers + 1, "bla bla");
+	}
+	
+	@Test (expected = IllegalStateException.class)
+	public void testAddMeetingNotesFutureMeeting(){
+		
+		cm.addMeetingNotes(10, "bla");
+	}
+	
+	@Test (expected = NullPointerException.class)
+	public void testAddMeetingNotesNullNotes(){
+		
+		String notes = null;
+		GregorianCalendar date = new GregorianCalendar();
+		Set<Contact> contact = cm.getContacts(1,2,3);
+		cm.addFutureMeeting(contact, date);
+		cm.addMeetingNotes(11, notes);
+		cm.addMeetingNotes(11, null);
 	}
 
 	@Test
 	public void testAddNewContact() {
-		fail("Not yet implemented");
+		
+		String notes = "the new fella";
+		String name = "a new fella";
+		cm.addNewContact(name, notes);
+		assertEquals(8, (((ContactManagerImpl)cm).getContacts()).size());
+		boolean added = false;
+		for(Contact contact:((ContactManagerImpl)cm).getContacts()){
+			if(contact.getId() == 11){
+				added = true;
+			}
+		}
+		assertTrue(added);
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void testAddContactNullNotes(){
+		
+		String name = "the new fella";
+		String notes = null;
+		cm.addNewContact(name, notes);
 	}
 
 	@Test
 	public void testGetContactsIntArray() {
-		fail("Not yet implemented");
+		
+		Contact tomWolfe = new ContactImpl("Tom Wolfe", "Written nothing good for years", 1);
+		Contact martinAmis = new ContactImpl("Martin Amis", "Martin my dad is Kingsley Amis Amis", 2);
+		Set<Contact> expected = new LinkedHashSet<Contact>();
+		expected.add(tomWolfe);
+		expected.add(martinAmis);
+		
+		Set<Contact> result = cm.getContacts(1, 2);
+		
+		assertEquals(expected, result);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testGetContactsIntArrayFakeContact(){
+		
+		cm.getContacts(ContactManagerImpl.IDnumbers + 1);
 	}
 
 	@Test
 	public void testGetContactsString() {
-		fail("Not yet implemented");
+		
+		Set<Contact> result = cm.getContacts("Joseph Heller");
+		assertEquals(1, result.size());
+	}
+	
+	@Test
+	public void testGetContactsStringTwoHellers(){
+		
+		cm.addNewContact("Joseph Heller", "some notes");
+		Set<Contact> result = cm.getContacts("Joseph Heller");
+		assertEquals(2, result.size());
 	}
 
 	@Test
 	public void testFlush() {
-		fail("Not yet implemented");
+		try {
+			cm.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
 	public void testGenerateData() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testDeleteFile() {
-		fail("Not yet implemented");
+	
+		((ContactManagerImpl) cm).generateData();
 	}
 
 }
