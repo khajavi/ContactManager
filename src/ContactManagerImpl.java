@@ -33,69 +33,71 @@ public class ContactManagerImpl implements ContactManager {
 			GregorianCalendar Date = new GregorianCalendar();
 			if(date.before(Date)){
 				throw new IllegalArgumentException();
-			}else if (attendees == null){
-				throw new NullPointerException();
-			}else{
-			Meeting m = new FutureMeetingImpl(attendees, date);
+			}
+			boolean fakeContact = checkContacts(attendees);
+			if(!fakeContact){
+				throw new IllegalArgumentException();
+			}
+			Meeting m = new FutureMeetingImpl(attendees, date, IDnumbers);
+			IDnumbers++;
 			FutureMeetings.add(m);
 			return m.getID();
+		}
+		
+		public boolean checkContacts(Set<Contact> attendees){
+			
+			for(Contact contact: attendees){
+				if(!Contacts.contains(contact)){
+					return false;
+				}
 			}
+			return true;
 		}
 
 		public PastMeeting getPastMeeting(int id){
-			try{
-				for(int i = 0; i < FutureMeetings.size(); i++){
-					if(FutureMeetings.get(i).getID() == id){
-						throw new IllegalArgumentException("This meeting has not taken place yet");
-					}
+			
+			for(Meeting meeting: FutureMeetings){
+				if(meeting.getID() == id){
+					throw new IllegalArgumentException();
 				}
-				for(int i = 0; i < PastMeetings.size(); i++){
-					if(PastMeetings.get(i).getID() == id){
-						return PastMeetings.get(i);
-					}
-				}
-			return null;
-			} catch (IllegalArgumentException ex){
-				ex.printStackTrace();
-				System.out.println("This meeting is scheduled for the future");
-				return null;
 			}
+			for(PastMeeting meeting: PastMeetings){
+				if(meeting.getID() == id){
+					return meeting;
+				}
+			}
+			return null;
 		}
-		
 
 		public FutureMeeting getFutureMeeting(int id){
-			try{
-				for (int i = 0; i < PastMeetings.size(); i++){
-					if(PastMeetings.get(i).getID() == id){
-						throw new IllegalArgumentException();
-					}
-				}
-				for (int i = 0; i < FutureMeetings.size(); i++){
-					if(FutureMeetings.get(i).getID() == id){
-						FutureMeeting m = (FutureMeeting)FutureMeetings.get(i);
-						return m;
-					}
-				}
-				return null;
-			}catch (IllegalArgumentException ex){
-				ex.printStackTrace();
-				System.out.println("This meeting has already taken place");
-				return null;
-			}
 			
+			for(PastMeeting meeting: PastMeetings){
+				if(meeting.getID() == id){
+					throw new IllegalArgumentException();
+				}
+			}
+			for(Meeting meeting: FutureMeetings){
+				if(meeting.getID() == id){
+					return (FutureMeeting) meeting;
+				}
+			}
+			return null;
 		}
 		
 		public Meeting getMeeting(int id){
-			for(int i = 0; i < FutureMeetings.size(); i++){
-				if(FutureMeetings.get(i).getID() == id){
-					return FutureMeetings.get(i);
-				}	
-			}
-			for(int i = 0; i < PastMeetings.size(); i++){
-				if(PastMeetings.get(i).getID() == id){
-					return (Meeting)PastMeetings.get(i);
+			
+			for(Meeting meeting: FutureMeetings){
+				if(meeting.getID() == id){
+					return meeting;
 				}
 			}
+			
+			for(PastMeeting meeting: PastMeetings){
+				if(meeting.getID() == id){
+					return (Meeting)meeting;
+				}
+			}
+			
 			return null;
 		}
 		
@@ -138,48 +140,38 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		public List<Meeting> getFutureMeetingList(Contact contact){
-			try{
-				if(!Contacts.contains(contact)){
-					throw new IllegalArgumentException();
-				}
-				Set<Meeting> meetings = new LinkedHashSet<Meeting>();
-				for(int i = 0; i < FutureMeetings.size(); i++){
-					if(FutureMeetings.get(i).getContacts().contains(contact)){
-						meetings.add(FutureMeetings.get(i));
-					}
-				}
-				List<Meeting> result = new ArrayList<Meeting>();
-				meetings.addAll(result); 
-				quickSort(result);
-				return result;
-			}catch (IllegalArgumentException ex){
-				ex.printStackTrace();
-				System.out.println("This contact does not exist");
-				return null;
+			if(!Contacts.contains(contact)){
+				throw new IllegalArgumentException();
 			}
+			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
+			for(Meeting meeting: FutureMeetings){
+				if(meeting.getContacts().contains(contact)){
+					meetings.add(meeting);
+				}
+			}
+			List<Meeting> result = new ArrayList<Meeting>();
+			meetings.addAll(result);
+			quickSort(result);
+			return result;
 		}
-
+		
 		public List<Meeting> getFutureMeetingList(Calendar date){
-			try{
-				Calendar Date = Calendar.getInstance();
-				if(date.before(Date)){
-					throw new IllegalArgumentException();
-				}
-				Set<Meeting> meetings = new LinkedHashSet<Meeting>();
-				for(int i = 0; i < FutureMeetings.size(); i++){
-					if(FutureMeetings.get(i).getDate().compareTo(date) == 0){
-						meetings.add(FutureMeetings.get(i));
-					}
-				}
-				List<Meeting> result = new ArrayList<Meeting>();
-				meetings.addAll(result);
-				quickSort(result);
-				return result;
-			} catch (IllegalArgumentException ex){
-				System.out.println("This date is in the past");
-				return null;
+			
+			Calendar Date = Calendar.getInstance();
+			if(date.before(Date)){
+				throw new IllegalArgumentException();
 			}
+			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
+			for(Meeting meeting: FutureMeetings){
+				if(meeting.getDate().compareTo(date) == 0){
+					meetings.add(meeting);
+				}
 			}
+			List<Meeting> result = new ArrayList<Meeting>();
+			meetings.addAll(result);
+			quickSort(result);
+			return result;
+		}
 		
 		public List<PastMeeting> getPastMeetingList(Contact contact){
 			try{
@@ -210,103 +202,86 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text){
-			try{
-				if(contacts.isEmpty() || !Contacts.containsAll(contacts)){
-					throw new IllegalArgumentException();
-				}
-				PastMeeting meeting = new PastMeetingImpl(date, contacts, text);
-				PastMeeting result = (PastMeeting)meeting;
-				PastMeetings.add(result);
-			} catch (IllegalArgumentException ex){
-				if(contacts.isEmpty()){
-					ex.printStackTrace();
-					System.out.println("The set of contacts is empty");
-				} else{
-					ex.printStackTrace();
-					System.out.println("At least one of the contacts does not exist");
-				}
-			} catch (NullPointerException ex){
-				ex.printStackTrace();
-			}
-		}
-		
 
-		//need to account for circumstance when just adding notes
+			if(contacts.isEmpty() || !Contacts.containsAll(contacts)){
+				throw new IllegalArgumentException();
+			}
+			PastMeeting meeting = new PastMeetingImpl(date, contacts, text, IDnumbers);
+			IDnumbers++;
+			PastMeeting result = (PastMeeting)meeting;
+			PastMeetings.add(result);
+		}
+
 		public void addMeetingNotes(int id, String text){
-			try {
-				boolean illegalArgument = false;
-				int index = 0;
-				Calendar Date = Calendar.getInstance();
-				for(int i = 0; i < FutureMeetings.size(); i++){
-					if(FutureMeetings.get(i).getID() == id){
-						illegalArgument = true;
-						if(Date.before(FutureMeetings.get(i).getDate())){
-							throw new IllegalStateException();
-						}
-						index = i;
+			
+			if(text == null){
+				throw new NullPointerException();
+			}
+			
+			boolean meetingExists = false;
+			GregorianCalendar now = new GregorianCalendar();
+			
+			for(Meeting meeting: FutureMeetings){
+				if(meeting.getID() == id){
+					meetingExists = true;
+					if(meeting.getDate().after(now)){
+						throw new IllegalStateException();
+					}else{
+						PastMeetings.add(new PastMeetingImpl(meeting.getDate(), meeting.getContacts(), text, id));
+						FutureMeetings.remove(meeting);
 					}
+					
 				}
-				if(!illegalArgument){
-					throw new IllegalArgumentException();
+			}
+			for(PastMeeting meeting: PastMeetings){
+				if(meeting.getID() == id){
+					meetingExists = true;
+					meeting.addNotes(text);
 				}
-				PastMeeting meeting = new PastMeetingImpl(FutureMeetings.get(index).getDate(), FutureMeetings.get(index).getContacts(),text, id);
-				PastMeetings.add(meeting); 
-				FutureMeetings.remove(index);
-			} catch (NullPointerException ex){
-				ex.printStackTrace();
-			} catch (IllegalStateException ex){
-				ex.printStackTrace();
+			}
+			if(!meetingExists){
+				throw new IllegalArgumentException();
 			}
 		}
 		
 		public void addNewContact(String name, String notes){
-			try{
-				Contact c = new ContactImpl(name, notes);
-				Contacts.add(c);
-			} catch (NullPointerException ex){
-				ex.printStackTrace();
+			
+			if(notes == null){
+				throw new NullPointerException();
 			}
+			Contacts.add(new ContactImpl(name, notes, IDnumbers));
+			IDnumbers++; 
 		}
 		
 		public Set<Contact> getContacts(int... id){
-			try{
-				Set<Contact> result = new LinkedHashSet<Contact>(); 
-				for(int i = 0; i < id.length; i++){
-					Iterator<Contact> itr = Contacts.iterator();
-					while(itr.hasNext()){
-						Contact c = itr.next();
-						if(c.getId() == id[i]){
-							result.add(c);
-						}
+			
+			Set<Contact> result = new LinkedHashSet<Contact>();
+			for(int ID: id){
+				for(Contact contact: Contacts){
+					if(ID == contact.getId()){
+						result.add(contact);
 					}
 				}
-				if(result.size() != id.length){
-					throw new IllegalArgumentException();
-				}
-				return result;
-			}catch(IllegalArgumentException ex){
-				ex.printStackTrace();
-				System.out.println("At least one of those contacts does not exist");
-				return null;
 			}
+			if(result.size() != id.length){
+				throw new IllegalArgumentException();
+			}
+			return result;
 		}
 		
 		public Set<Contact> getContacts(String name){
-			try{
-				Set<Contact> result = new LinkedHashSet<Contact>();
-				Iterator<Contact> itr = Contacts.iterator();
-				while (itr.hasNext()){
-					Contact c = itr.next();
-					if(c.getName().equals(name)){
-						result.add(c);
-					}
-				}
-				return result;
-			}catch (NullPointerException ex){
-					ex.printStackTrace();
-					return null;
+			
+			if(name == null){
+				throw new NullPointerException();
+			}
+			Set<Contact> result = new LinkedHashSet<Contact>();
+			for(Contact contact: Contacts){
+				if(contact.getName().equals(name)){
+					result.add(contact);
 				}
 			}
+			return result;
+		}
 
 		public void flush() throws IOException {
 		PrintWriter printwriter = null;
@@ -432,5 +407,5 @@ public class ContactManagerImpl implements ContactManager {
 		public ArrayList<PastMeeting> getPastMeetings() {
 			return PastMeetings;
 		}
-	
+		
 }

@@ -8,13 +8,6 @@ public class MeetingImpl implements Meeting {
 	protected Calendar Date;
 	protected Set<Contact> Attendees;
 	
-	public MeetingImpl(Calendar Date, Set<Contact> Attendees){
-		ContactManagerImpl.IDnumbers++;
-		ID = ContactManagerImpl.IDnumbers;
-		this.Date = Date;
-		this.Attendees = Attendees;
-	}
-	
 	public MeetingImpl(Calendar Date, Set <Contact> Attendees, int id){
 		this.ID = id;
 		this.Date = Date;
@@ -43,5 +36,19 @@ public class MeetingImpl implements Meeting {
 			str = str + c.getId() + ",";
 		}
 		return str;
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		
+		if(o instanceof MeetingImpl){
+			if(this.getID() == ((MeetingImpl)o).getID()){
+				return true;
+			}else{
+				return false;
+			}
+		} else{
+			return false;
+		}
 	}
 }

@@ -5,12 +5,6 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
 	
 	private String Notes;
 	
-	
-	public PastMeetingImpl(Calendar date, Set<Contact> attendees, String notes){
-		super (date, attendees);
-		this.Notes = notes;
-	}
-	
 	//only to be used when a futureMeeting is being replaced with a past Meeting or when
 	//loading at startup
 	public PastMeetingImpl(Calendar date, Set<Contact> attendees, String notes, int id){
@@ -33,5 +27,19 @@ public class PastMeetingImpl extends MeetingImpl implements PastMeeting {
 		String str2 = "Past" + str;
 		str2 = str2 + "Notes:" + Notes;
 		return str2;
+	}
+	
+	@Override
+	public boolean equals(Object o){
+		
+		if(o instanceof PastMeetingImpl){
+			if(this.getID() == ((PastMeetingImpl)o).getID()){
+				return true;
+			}else{
+				return false;
+			}
+		} else{
+			return false;
+		}
 	}
 }
