@@ -190,6 +190,8 @@ public class DataUtilitiesImpl implements DataUtilities {
 		LinkedHashSet<Contact> Ids = getAttendees(data);
 		GregorianCalendar meetingDate = getMeetingDate(data);
 		
+		FutureMeetings.add(new MeetingImpl(meetingDate, Ids, id));
+		/*
 		Calendar now = new GregorianCalendar();
 		if(meetingDate.after(now)){
 			FutureMeeting futureMeeting = new FutureMeetingImpl(Ids, meetingDate, id);
@@ -198,7 +200,7 @@ public class DataUtilitiesImpl implements DataUtilities {
 			String notes = "";
 			PastMeeting pastMeeting = new PastMeetingImpl(meetingDate, Ids, notes, id);
 			PastMeetings.add(pastMeeting);
-		}		
+		}**/	
 	}
 	
 	public void loadPastMeeting(String data){

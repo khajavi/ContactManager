@@ -99,7 +99,7 @@ public class ContactManagerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetPastMeetingFutureId() {
 		
-		cm.getPastMeeting(9);
+		cm.getPastMeeting(10);
 	}
 
 	@Test
@@ -118,8 +118,8 @@ public class ContactManagerTest {
 	@Test
 	public void testGetFutureMeeting() {
 		
-		Meeting m = cm.getFutureMeeting(9);
-		assertEquals(9, m.getID());
+		Meeting m = cm.getFutureMeeting(11);
+		assertEquals(11, m.getID());
 	}
 
 	@Test
@@ -153,17 +153,17 @@ public class ContactManagerTest {
 			testList.add((Meeting)meeting);
 		}
 		testList = ((ContactManagerImpl) cm).quickSort(testList);
-		for(int i = 0; i < testList.size() - 1; i++){
-		assertTrue(testList.get(i).getDate().getTime().before(testList.get(i + 1).getDate().getTime()));
-		}
+		assertTrue(testList.get(0).getDate().before(testList.get(testList.size() - 1).getDate()));
 	}
 
 	@Test //Not sure what's going on.
 	public void testGetFutureMeetingListContact() {
 		
-		Set<Contact> cont = cm.getContacts(4);
-		Contact[] contact = cont.toArray(new Contact[1]); 
-		cm.getFutureMeetingList(contact[0]);
+		String name = "Douglas Adams";
+		String notes = "funniest writer dead";
+		Contact douglas = new ContactImpl(name, notes, 4);
+		List<Meeting> testList = cm.getFutureMeetingList(douglas);
+		assertEquals(10, testList.get(0).getID());
 	}
 
 	@Test
@@ -258,13 +258,9 @@ public class ContactManagerTest {
 	@Test
 	public void testAddMeetingNotes() {
 		
-		GregorianCalendar date = new GregorianCalendar();
-		String notes = "some notes";
-		Set<Contact> contact = cm.getContacts(1,2,3);
-		cm.addFutureMeeting(contact, date);
-		cm.addMeetingNotes(11, notes);
+		cm.addMeetingNotes(10, "some notes");
 		assertTrue(((ContactManagerImpl)cm).getPastMeetings().size() == 3);
-		assertEquals(notes, cm.getPastMeeting(11).getNotes());
+		assertEquals("some notes", cm.getPastMeeting(10).getNotes());
 	}
 	
 	@Test (expected = IllegalArgumentException.class)
@@ -276,7 +272,7 @@ public class ContactManagerTest {
 	@Test (expected = IllegalStateException.class)
 	public void testAddMeetingNotesFutureMeeting(){
 		
-		cm.addMeetingNotes(10, "bla");
+		cm.addMeetingNotes(11, "bla");
 	}
 	
 	@Test (expected = NullPointerException.class)
@@ -296,15 +292,11 @@ public class ContactManagerTest {
 		String notes = "the new fella";
 		String name = "a new fella";
 		cm.addNewContact(name, notes);
-		//assertEquals(8, (((ContactManagerImpl)cm).getContacts()).size());
 		boolean added = false;
 		for(Contact contact:((ContactManagerImpl)cm).getContacts()){
-			if(contact.getId() == 11){
+			if(contact.getId() == 12){
 				added = true;
 			}
-		}
-		for(Contact contact:((ContactManagerImpl)cm).getContacts()){
-			System.out.println(contact.getId() + contact.getName());
 		}
 		assertTrue(added);
 	}
@@ -351,16 +343,6 @@ public class ContactManagerTest {
 		Set<Contact> result = cm.getContacts("Joseph Heller");
 		assertEquals(2, result.size());
 	}
-
-	/*
-	@Test
-	public void testFlush() {
-		try {
-			cm.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}**/
 
 	@Test
 	public void testGenerateData() {

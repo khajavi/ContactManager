@@ -53,9 +53,26 @@ public class ContactTest {
 	
 	@Test
 	public void testEquals(){
+		
+		Contact expected = new ContactImpl("name", "notes", 1);
+		Contact result = new ContactImpl("name", "notes", 1);
+		assertEquals(expected, result);
+	}
+	
+	public void testEqualsDifferentContact(){
+		
+		Contact expected = new ContactImpl("name", "notes", 1);
+		Contact result = new ContactImpl("name", "notes", 2);
+		assertFalse(expected.equals(result));
+	}
+	
+	@Test
+	public void testSetEquality(){
 		Set<Contact> contact = new LinkedHashSet<Contact>();
 		contact.add(c);
-		assertTrue(contact.contains(c));
+		Contact c2  = new ContactImpl("name", "notes", 1);
+		//Equality is exclusive decided by id number
+		assertTrue(contact.contains(c2));
 	}
 
 }

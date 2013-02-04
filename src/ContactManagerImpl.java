@@ -111,8 +111,7 @@ public class ContactManagerImpl implements ContactManager {
 		public List<Meeting> quickSort(List<Meeting> list){
 			if(list.size() == 1){
 				return list;
-			}
-			else{
+			}else{
 				List<Meeting> before = new ArrayList<Meeting>();
 				List<Meeting> after = new ArrayList<Meeting>();
 				Meeting pivot = list.get(0);
@@ -174,49 +173,47 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		public List<PastMeeting> getPastMeetingList(Contact contact){
-			try{
-				if(!Contacts.contains(contact)){
-					throw new IllegalArgumentException("This contact does not exist");
-				}
-				Set<Meeting> meetings = new LinkedHashSet<Meeting>();
-				for(int i = 0; i < PastMeetings.size(); i++){
-					if(PastMeetings.get(i).getContacts().contains(contact)){
-						Meeting m = (Meeting) PastMeetings.get(i);
-						meetings.add(m);
-					}
-				}
-				List<Meeting> temp = new ArrayList<Meeting>();
-				meetings.addAll(temp);
-				quickSort(temp);
-				List<PastMeeting> result = new ArrayList<PastMeeting>();
-				for(int i = 0; i < temp.size(); i++){
-					PastMeeting m = (PastMeeting) temp.get(i);
-					result.add(m);
-				}
-				return result;
-			} catch(IllegalArgumentException ex){
-				ex.printStackTrace();
-				System.out.println(ex);
-				return null;
+
+			if(!Contacts.contains(contact)){
+				throw new IllegalArgumentException("This contact does not exist");
 			}
+			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
+			for(int i = 0; i < PastMeetings.size(); i++){
+				if(PastMeetings.get(i).getContacts().contains(contact)){
+					Meeting m = (Meeting) PastMeetings.get(i);
+					meetings.add(m);
+				}
+			}
+			List<Meeting> temp = new ArrayList<Meeting>();
+			meetings.addAll(temp);
+			quickSort(temp);
+			List<PastMeeting> result = new ArrayList<PastMeeting>();
+			for(int i = 0; i < temp.size(); i++){
+			PastMeeting m = (PastMeeting) temp.get(i);
+				result.add(m);
+			}
+			return result;
 		}
 		
 		public void addNewPastMeeting(Set<Contact> contacts, Calendar date, String text){
 
-			if(contacts.isEmpty() || !Contacts.containsAll(contacts)){
+			if(contacts == null || date == null || text == null){
+				throw new NullPointerException();
+			}else if(contacts.isEmpty() || !Contacts.containsAll(contacts)){
 				throw new IllegalArgumentException();
+			}else{
+				PastMeeting meeting = new PastMeetingImpl(date, contacts, text, IDnumbers);
+				IDnumbers++;
+				PastMeeting result = (PastMeeting)meeting;
+				PastMeetings.add(result);
 			}
-			PastMeeting meeting = new PastMeetingImpl(date, contacts, text, IDnumbers);
-			IDnumbers++;
-			PastMeeting result = (PastMeeting)meeting;
-			PastMeetings.add(result);
+			
 		}
 
 		public void addMeetingNotes(int id, String text){
 			
-			if(text == null){
+			if(text == null)
 				throw new NullPointerException();
-			}
 			
 			boolean meetingExists = false;
 			GregorianCalendar now = new GregorianCalendar();
@@ -230,7 +227,6 @@ public class ContactManagerImpl implements ContactManager {
 						PastMeetings.add(new PastMeetingImpl(meeting.getDate(), meeting.getContacts(), text, id));
 						FutureMeetings.remove(meeting);
 					}
-					
 				}
 			}
 			for(PastMeeting meeting: PastMeetings){
@@ -239,9 +235,8 @@ public class ContactManagerImpl implements ContactManager {
 					meeting.addNotes(text);
 				}
 			}
-			if(!meetingExists){
+			if(!meetingExists)
 				throw new IllegalArgumentException();
-			}
 		}
 		
 		public void addNewContact(String name, String notes){

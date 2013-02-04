@@ -34,16 +34,25 @@ public class ContactImpl implements Contact {
 	}
 	
 	@Override
-	public boolean equals(Object o){
-		if(o instanceof ContactImpl){
-			if(this.ID == ((ContactImpl) o).getId()){
-				return true;
-			}else{
-				return false;
-			}
-		}else{
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ID;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		}
+		if (getClass() != obj.getClass())
+			return false;
+		ContactImpl other = (ContactImpl) obj;
+		if (ID != other.ID)
+			return false;
+		return true;
 	}
 	
 	public int getId() {
