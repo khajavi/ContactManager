@@ -139,18 +139,19 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		public List<Meeting> getFutureMeetingList(Contact contact){
-			if(!Contacts.contains(contact)){
+			if(!Contacts.contains(contact))
 				throw new IllegalArgumentException();
-			}
+			
 			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
+			
 			for(Meeting meeting: FutureMeetings){
 				if(meeting.getContacts().contains(contact)){
 					meetings.add(meeting);
 				}
 			}
 			List<Meeting> result = new ArrayList<Meeting>();
-			meetings.addAll(result);
-			quickSort(result);
+			result.addAll(meetings);
+			result = quickSort(result);
 			return result;
 		}
 		
@@ -162,13 +163,13 @@ public class ContactManagerImpl implements ContactManager {
 			}
 			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
 			for(Meeting meeting: FutureMeetings){
-				if(meeting.getDate().compareTo(date) == 0){
+				if(meeting.getDate().equals(date))
 					meetings.add(meeting);
-				}
+				
 			}
 			List<Meeting> result = new ArrayList<Meeting>();
-			meetings.addAll(result);
-			quickSort(result);
+			result.addAll(meetings);
+			result = quickSort(result);
 			return result;
 		}
 		
@@ -177,20 +178,30 @@ public class ContactManagerImpl implements ContactManager {
 			if(!Contacts.contains(contact)){
 				throw new IllegalArgumentException("This contact does not exist");
 			}
-			Set<Meeting> meetings = new LinkedHashSet<Meeting>();
-			for(int i = 0; i < PastMeetings.size(); i++){
-				if(PastMeetings.get(i).getContacts().contains(contact)){
-					Meeting m = (Meeting) PastMeetings.get(i);
-					meetings.add(m);
-				}
+			Set<PastMeeting> meetings = new LinkedHashSet<PastMeeting>();
+			
+			for(PastMeeting meeting: PastMeetings){
+				if(meeting.getContacts().contains(contact))
+					meetings.add(meeting);
+			}
+			for(PastMeeting meeting: meetings){
+				System.out.println(meeting.toString());
 			}
 			List<Meeting> temp = new ArrayList<Meeting>();
-			meetings.addAll(temp);
-			quickSort(temp);
+			
+			for(PastMeeting meeting: meetings){
+				System.out.println(meeting.toString());
+				temp.add((Meeting)meeting);
+			}
+			for(Meeting meeting: temp){
+				System.out.println(meeting.toString());
+			}
+			temp = quickSort(temp);
+			
 			List<PastMeeting> result = new ArrayList<PastMeeting>();
-			for(int i = 0; i < temp.size(); i++){
-			PastMeeting m = (PastMeeting) temp.get(i);
-				result.add(m);
+			
+			for(Meeting meeting: temp){
+				result.add((PastMeeting)meeting);
 			}
 			return result;
 		}

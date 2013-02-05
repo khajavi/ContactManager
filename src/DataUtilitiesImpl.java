@@ -135,18 +135,19 @@ public class DataUtilitiesImpl implements DataUtilities {
 	public LinkedHashSet<Contact> getAttendees(String data){
 		
 		LinkedHashSet<Contact> Ids = new LinkedHashSet<Contact>();
-		Pattern ContactIds = Pattern.compile("Contact Id:(([0-9]*,)*)");
+		Pattern ContactIds = Pattern.compile("Contact Ids:(([0-9]*,)*)");
 		Pattern findId = Pattern.compile("[0-9]+");
 		ArrayList<Integer> listIds = new ArrayList<Integer>();
 		
 		Matcher m = ContactIds.matcher(data);
+		
 		while(m.find()){
 			Matcher m2 = findId.matcher(m.group());
 			while(m2.find()){
-				int id = Integer.parseInt(m2.group());
-				listIds.add(id);
+				listIds.add(Integer.parseInt(m2.group()));
 			}
 		}
+
 		for(Integer id: listIds){
 			for (Contact c: Contacts){
 				if(c.getId() == id){
@@ -189,18 +190,51 @@ public class DataUtilitiesImpl implements DataUtilities {
 		int id = getMeetingID(data);
 		LinkedHashSet<Contact> Ids = getAttendees(data);
 		GregorianCalendar meetingDate = getMeetingDate(data);
+		meetingDate.set(Calendar.HOUR_OF_DAY, getHourofDay(data));
+		meetingDate.set(Calendar.MINUTE,getMinute(data));
+		FutureMeetings.add(new MeetingImpl(meetingDate, Ids, id));	
+	}
+	
+	public int getHourofDay(String data){
 		
-		FutureMeetings.add(new MeetingImpl(meetingDate, Ids, id));
-		/*
-		Calendar now = new GregorianCalendar();
-		if(meetingDate.after(now)){
-			FutureMeeting futureMeeting = new FutureMeetingImpl(Ids, meetingDate, id);
-			FutureMeetings.add(futureMeeting);
-		}else{
-			String notes = "";
-			PastMeeting pastMeeting = new PastMeetingImpl(meetingDate, Ids, notes, id);
-			PastMeetings.add(pastMeeting);
-		}**/	
+		Pattern getHour = Pattern.compile("Time:[0-9]{1,2}/[0-9]{1,2}");
+		Pattern findHour = Pattern.compile("[0-9]{1,2}/");
+		
+		Matcher m = getHour.matcher(data);
+		String time = "";
+
+		while(m.find()){
+			time = m.group();
+		}
+		int result = 0;
+		m = findHour.matcher(time);
+		
+		String hour = "";
+		while(m.find()){
+			hour = m.group();
+		}
+		result = Integer.parseInt(hour.substring(0, hour.length() - 1));
+		return result;
+	}
+	
+	
+	public int getMinute(String data){
+		
+		Pattern getMinute = Pattern.compile("Time:[0-9]{1,2}/[0-9]{1,2}");
+		Pattern findMinute = Pattern.compile("/[0-9]{1,2}");
+		
+		Matcher m = getMinute.matcher(data);
+		String time = "";
+		while(m.find()){
+			time = m.group();
+		}
+		
+		int result = 0;
+		m = findMinute.matcher(time);
+		while(m.find()){
+			result = Integer.parseInt(m.group().substring(1, m.group().length()));
+		}
+		return result;
 	}
 	
 	public void loadPastMeeting(String data){
@@ -209,6 +243,8 @@ public class DataUtilitiesImpl implements DataUtilities {
 		String notes = getNotes(data);
 		GregorianCalendar meetingDate = getMeetingDate(data);
 		LinkedHashSet<Contact> attendees = getAttendees(data);
+		meetingDate.set(Calendar.HOUR_OF_DAY, getHourofDay(data));
+		meetingDate.set(Calendar.MINUTE,getMinute(data));
 		
 		PastMeeting pastMeeting = new PastMeetingImpl(meetingDate, attendees, notes, id);
 		PastMeetings.add(pastMeeting);

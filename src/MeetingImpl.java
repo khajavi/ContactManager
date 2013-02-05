@@ -1,4 +1,5 @@
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Set;
 
 
@@ -31,6 +32,7 @@ public class MeetingImpl implements Meeting {
 		
 		String str = "Meeting Id:" + ID + ",";
 		str = str + "Date:" + Date.get(Calendar.YEAR) + "/" + Date.get(Calendar.MONTH) + "/" + Date.get(Calendar.DATE) + ",";
+		str = str + "Time:" + Date.get(Calendar.HOUR_OF_DAY) + "/" + Date.get(Calendar.MINUTE) + ",";
 		str = str + "Contact Ids:";
 		for(Contact c: Attendees){
 			str = str + c.getId() + ",";

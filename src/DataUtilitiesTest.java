@@ -15,6 +15,7 @@ public class DataUtilitiesTest {
 	private String meeting2 = "Meeting Id:2,Date:2009/11/25,Contact Ids:4,5,6,Notes:this will be boring";
 	private String pastMeeting = "PastMeeting Id:2,Date:2009/11/25,Contact Ids:4,5,6,Notes:this will be boring";
 	private String contact = "Name:BigJohn,Contact Id:4,Notes:he can load 15 tonnes";
+	private String testTime = "Meeting Id:2,Date:2150/11/25,Time:13/54,Contact Ids:4,Notes:this will be boring";
 	
 	@Before
 	public void setUp(){
@@ -53,12 +54,12 @@ public class DataUtilitiesTest {
 	@Test
 	public void testGetAttendees() {
 		
+		System.out.println("testGetAttendees()");
 		d.loadContact("Name:BigJohn,Contact Id:4,Notes:he can load 15 tonnes");
 		Contact c = new ContactImpl("BigJohn", "he can load 15 tonnes", 4);
 		Set<Contact> contact = new LinkedHashSet<Contact>();
 		contact.add(c);
 		assertEquals(contact, d.getAttendees(meeting));
-		
 	}
 
 	@Test
@@ -66,5 +67,17 @@ public class DataUtilitiesTest {
 		
 		GregorianCalendar testCal = new GregorianCalendar(2150, 11, 25);
 		assertEquals(testCal.getTime(),d.getMeetingDate(meeting).getTime());
+	}
+	
+	@Test
+	public void testgetHourofDay(){
+		
+		assertEquals(13, ((DataUtilitiesImpl) d).getHourofDay(testTime));
+	}
+	
+	@Test
+	public void testgetMinute(){
+		
+		assertEquals(54, ((DataUtilitiesImpl) d).getMinute(testTime));
 	}
 }

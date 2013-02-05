@@ -17,13 +17,6 @@ public class ContactImpl implements Contact {
 		this.ID = id;
 	}
 	
-	public ContactImpl(String Name){
-		ContactManagerImpl.IDnumbers++;
-		ID = ContactManagerImpl.IDnumbers;
-		this.Name = Name;
-		this.Notes = "";
-	}
-	
 	@Override
 	public String toString(){
 		
@@ -32,6 +25,7 @@ public class ContactImpl implements Contact {
 		str = str + "Notes:" + Notes;
 		return str;
 	}
+	
 	
 	@Override
 	public int hashCode() {

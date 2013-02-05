@@ -67,7 +67,6 @@ public class ContactManagerTest {
 	public void testAddFutureMeetingExeptionPastDate(){
 		
 		GregorianCalendar date = getPastDate();
-		System.out.println(date.getTime());
 		LinkedHashSet<Contact> attendees = (LinkedHashSet<Contact>) cm.getContacts(1,2);
 		cm.addFutureMeeting(attendees, date);
 	}
@@ -163,7 +162,7 @@ public class ContactManagerTest {
 		String notes = "funniest writer dead";
 		Contact douglas = new ContactImpl(name, notes, 4);
 		List<Meeting> testList = cm.getFutureMeetingList(douglas);
-		assertEquals(10, testList.get(0).getID());
+		assertEquals(11, testList.get(testList.size() - 1).getID());
 	}
 
 	@Test
@@ -192,11 +191,9 @@ public class ContactManagerTest {
 	@Test
 	public void testGetPastMeetingList() {
 		
-		Set<Contact> cont = cm.getContacts(3);
-		Contact[] contact = cont.toArray(new Contact[1]);
-		Contact c = contact[0];
-		List<PastMeeting> pmList = cm.getPastMeetingList(c);
-		assertTrue(pmList.get(0).getID() == 8);
+		Contact test = new ContactImpl("name", "notes", 3);
+		List<PastMeeting> testList = cm.getPastMeetingList(test);
+		assertTrue(testList.size() == 1);
 	}
 
 	@Test

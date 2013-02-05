@@ -1,6 +1,6 @@
 Name:BigJohn,Contact Id:4,Notes:he can load 14 tonnes
 Name:BigTom,Contact Id:5,Notes:he can load 15 tonnes
 Name:BigBill,Contact Id:6,Notes:he can load 16 tonnes
-Meeting Id:2,Date:2150/11/25,Contact Ids:4,5,6,Notes:this will be boring
-Meeting Id:2,Date:2009/11/25,Contact Ids:4,5,6,Notes:this will be boring
-PastMeeting Id:2,Date:2009/11/25,Contact Ids:4,5,6,Notes:this will be boring
+Meeting Id:2,Date:2150/11/25,Time:10/30,Contact Ids:4,5,6,Notes:this will be boring
+Meeting Id:2,Date:2009/11/25,Time:9/54,Contact Ids:4,5,6,Notes:this will be boring
+PastMeeting Id:2,Date:2009/11/25,Time:0/0,Contact Ids:4,5,6,Notes:this will be boring
