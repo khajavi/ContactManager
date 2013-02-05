@@ -48,7 +48,7 @@ public class MeetingTest {
 
 	@Test
 	public void testToString() {
-		String str = "Meeting Id:1,Date:2150/11/25,Contact Ids:2,3,";
+		String str = "Meeting Id:1,Date:2150/11/25,Time:0/0,Contact Ids:2,3,";
 		assertEquals(str, m.toString());
 	}
 

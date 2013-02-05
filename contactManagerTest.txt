@@ -1,0 +1,11 @@
+IDnumbers:
+Name:Tom Wolfe,Contact Id:0,Notes:Written nothing good for years
+Name:Martin Amis,Contact Id:1,Notes:Martin my dad is Kingsley Amis Amis
+Name:Bret Easton Ellis,Contact Id:2,Notes:There is some sick going on in my cranium
+Name:Douglas Adams,Contact Id:3,Notes:funniest writer dead
+Name:Joseph Heller,Contact Id:4,Notes:I'll catch you in Catch 22
+Name:Jonathan Franzen,Contact Id:5,Notes:Freedom, the Corrections, Fuck off
+Name:Kingsley Amis,Contact Id:6,Notes:Lucky Jim
+PastMeeting Id:7,Date:2011/10/8,Contact Ids:1,2,3,Notes:Fun meeting
+PastMeeting Id:8,Date:1988/8/8,Contact Ids:4,5,Notes:Hilarious dudes
+

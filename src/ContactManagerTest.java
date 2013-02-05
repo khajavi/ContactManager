@@ -1,6 +1,5 @@
 import static org.junit.Assert.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -8,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -280,7 +278,6 @@ public class ContactManagerTest {
 		Set<Contact> contact = cm.getContacts(1,2,3);
 		cm.addFutureMeeting(contact, date);
 		cm.addMeetingNotes(11, notes);
-		cm.addMeetingNotes(11, null);
 	}
 
 	@Test

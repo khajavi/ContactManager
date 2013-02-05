@@ -75,4 +75,18 @@ public interface DataUtilities {
 	 * @param String a string containing all the meeting's details
 	 */
 	void loadPastMeeting(String data);
+	
+	/*
+	 * Returns the hour of day the meeting is scheduled for (24hr clock)
+	 * 
+	 * @param String a string containing all the meetings details
+	 */
+	int getHourofDay(String data);
+	
+	/*
+	 * Returns the meeting time
+	 * 
+	 * @param String a string containing all the meetings details
+	 */
+	int getMinute(String data);
 }

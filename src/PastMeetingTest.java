@@ -28,7 +28,7 @@ public class PastMeetingTest {
 	@Test
 	public void testToString() {
 		
-		String test = "PastMeeting Id:1,Date:2012/11/10,Contact Ids:2,3,Notes:some notes.";
+		String test = "PastMeeting Id:1,Date:2012/11/10,Time:0/0,Contact Ids:2,3,Notes:some notes.";
 		assertEquals(test, pm.toString());
 	}
 
