@@ -200,20 +200,14 @@ public class DataUtilitiesImpl implements DataUtilities {
 		Pattern getHour = Pattern.compile("Time:[0-9]{1,2}/[0-9]{1,2}");
 		Pattern findHour = Pattern.compile("[0-9]{1,2}/");
 		
-		Matcher m = getHour.matcher(data);
-		String time = "";
-
-		while(m.find()){
-			time = m.group();
-		}
 		int result = 0;
-		m = findHour.matcher(time);
-		
-		String hour = "";
+		Matcher m = getHour.matcher(data);
 		while(m.find()){
-			hour = m.group();
+			Matcher m2 = findHour.matcher(m.group());
+			while(m2.find()){
+				result = Integer.parseInt(m2.group().substring(0, m2.group().length() - 1));
+			}
 		}
-		result = Integer.parseInt(hour.substring(0, hour.length() - 1));
 		return result;
 	}
 	
@@ -224,15 +218,12 @@ public class DataUtilitiesImpl implements DataUtilities {
 		Pattern findMinute = Pattern.compile("/[0-9]{1,2}");
 		
 		Matcher m = getMinute.matcher(data);
-		String time = "";
-		while(m.find()){
-			time = m.group();
-		}
-		
 		int result = 0;
-		m = findMinute.matcher(time);
 		while(m.find()){
-			result = Integer.parseInt(m.group().substring(1, m.group().length()));
+			Matcher m2 = findMinute.matcher(m.group());
+			while(m2.find()){
+				result = Integer.parseInt(m2.group().substring(1, m2.group().length()));
+			}
 		}
 		return result;
 	}
