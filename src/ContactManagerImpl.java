@@ -350,56 +350,13 @@ public class ContactManagerImpl implements ContactManager {
 		}
 		
 		public void Exit() throws IOException{
+	
 			try{
 				flush();
-				System.exit(0);//need to check what to put in here.
+				System.exit(0);
 			}catch(IOException ex){
 				ex.printStackTrace();
 			}
-		}
-		
-		public static void main (String [] args){
-			ContactManagerImpl cm = new ContactManagerImpl("/Users/williamhogarth/Documents/workspace/Contact Manager/src/contacts.txt");
-			try {
-				cm.launch();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		private void launch() throws IOException{
-		
-			addNewContact("Tom Wolfe", "Written nothing good for years");
-			addNewContact("Martin Amis", "Martin my dad is Kingsley Amis Amis");
-			addNewContact("Bret Easton Ellis", "There is some sick going on in my cranium");
-			addNewContact("Douglas Adams", "funniest writer dead");
-			addNewContact("Joseph Heller", "I'll catch you in Catch 22");
-			addNewContact("Jonathan Franzen", "Freedom, the Corrections, Fuck off");
-			addNewContact("Kingsley Amis", "Lucky Jim");
-			
-			Set<Contact> cont = new LinkedHashSet<Contact>();
-			
-			cont = getContacts(1,2,3);
-			Calendar date = new GregorianCalendar(2011, 10, 8);
-			
-			
-			addNewPastMeeting(cont, date, "Fun meeting");
-			
-			date = new GregorianCalendar(1988,8,8);
-			cont = getContacts(4,5);
-			addNewPastMeeting(cont, date, "Hilarious dudes");
-
-			cont = getContacts(6,7);
-			date = new GregorianCalendar();
-			
-			addFutureMeeting(cont, date);
-			
-			cont = getContacts(4,5,7);
-			date = new GregorianCalendar(2013, 8, 8);
-			addFutureMeeting(cont, date);
-			
-			Exit();
-			
 		}
 
 		public LinkedHashSet<Contact> getContacts() {
