@@ -26,7 +26,7 @@ public class DataUtilitiesTest {
 	public void testReadData() {
 		
 		d.readData();
-		assert(((DataUtilitiesImpl) d).getContacts().size() == 3);
+		assert(((DataUtilitiesImpl)d).getContacts().size() == 3);
 		assert(((DataUtilitiesImpl)d).getFutureMeetings().size() == 1);
 		assert(((DataUtilitiesImpl)d).getPastMeetings().size() == 2);
 	}
